@@ -11,8 +11,8 @@ class BoxModel {
   BoxType boxType;
 
   BoxModel({
-    this.sizeH = 50.0,
-    this.sizeW = 50.0,
+    this.sizeH = 44.0,
+    this.sizeW = 44.0,
     required this.indexOfColumn,
     required this.indexOfRow,
     this.value = '',

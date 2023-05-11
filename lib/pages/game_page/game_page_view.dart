@@ -32,6 +32,43 @@ class _GamePageState extends State<GamePage> {
         title: const Text('Material App Bar'),
         actions: [
           IconButton(
+              onPressed: () {
+                try {
+                  setState(() {
+                    viewModel.addOperation();
+                  });
+                } on AddOperationTimedOut {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Add Math Operation timed out!'),
+                      content: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Done'),
+                        ),
+                      ],
+                    ),
+                  );
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('An Exception Occurred!'),
+                      content: Text(e.toString()),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Done'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+              icon: Icon(Icons.add)),
+          IconButton(
             onPressed: () => setState(() {
               viewModel.restart();
             }),
@@ -46,45 +83,6 @@ class _GamePageState extends State<GamePage> {
           child: Column(
             children: [
               const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  try {
-                    setState(() {
-                      viewModel.addOperation();
-                    });
-                  } on AddOperationTimedOut {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Add Math Operation timed out!'),
-                        content: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Done'),
-                          ),
-                        ],
-                      ),
-                    );
-                  } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('An Exception Occurred!'),
-                        content: Text(e.toString()),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Done'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Add Math Operation'),
-              ),
-              const SizedBox(height: 25),
               ...List.generate(
                 viewModel.gameTable.length,
                 (indexOfColumn) => Row(
