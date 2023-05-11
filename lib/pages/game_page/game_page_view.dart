@@ -67,7 +67,7 @@ class _GamePageState extends State<GamePage> {
                   );
                 }
               },
-              icon: Icon(Icons.add)),
+              icon: const Icon(Icons.add)),
           IconButton(
             onPressed: () => setState(() {
               viewModel.restart();
