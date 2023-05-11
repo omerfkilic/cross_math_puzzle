@@ -29,6 +29,7 @@ class MathOperationModel {
         break;
     }
   }
+
   BoxModel getBoxModelForCreateANewOperation() {
     switch (Random().nextInt(5)) {
       case 0:
@@ -53,12 +54,3 @@ BoxType _findBoxType(int index) {
     return BoxType.number;
   }
 }
-
-//TODO Axis enum'ı ile değiştir bunu
-// enum OperationDirection {
-//   ///from left to right or vice versa
-//   horizontal,
-
-//   ///from top to bottom or vice versa
-//   vertical,
-// }
