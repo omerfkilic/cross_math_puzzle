@@ -1,44 +1,64 @@
+import 'dart:math';
+
 import 'package:cross_math_puzzle/models/box/box_model.dart';
+import 'package:flutter/material.dart';
 
 class MathOperationModel {
   List<BoxModel> boxes = [];
-  MathOperationModel({required int indexOfColumn, required int indexOfRow, required OperationDirection operationDirection}) {
+  Axis operationDirection;
+
+  MathOperationModel({required int indexOfColumn, required int indexOfRow, required this.operationDirection}) {
     switch (operationDirection) {
-      case OperationDirection.horizontal:
+      case Axis.vertical:
         for (var index = 0; index < 5; index++) {
           boxes.add(BoxModel(
             indexOfColumn: indexOfColumn + index,
             indexOfRow: indexOfRow,
-            boxType: findBoxType(index),
-            isFilled: true,
+            boxType: _findBoxType(index),
           ));
         }
         break;
-      case OperationDirection.vertical:
+      case Axis.horizontal:
         for (var index = 0; index < 5; index++) {
           boxes.add(BoxModel(
             indexOfColumn: indexOfColumn,
             indexOfRow: indexOfRow + index,
-            boxType: findBoxType(index),
-            isFilled: true,
+            boxType: _findBoxType(index),
           ));
         }
         break;
     }
   }
+  BoxModel getBoxModelForCreateANewOperation() {
+    switch (Random().nextInt(5)) {
+      case 0:
+        return boxes[0];
+      case 1:
+      case 2:
+        return boxes[2];
+      default:
+        return boxes[4];
+    }
+  }
 }
 
-BoxType findBoxType(int index) {
+BoxType _findBoxType(int index) {
   if (index == 1) {
-    return BoxType.aritmeticOperator;
-  } else if (index == 4) {
+    return BoxType.arithmeticOperator;
+  } else if (index == 3) {
     return BoxType.equalMark;
+  } else if (index == 4) {
+    return BoxType.result;
   } else {
     return BoxType.number;
   }
 }
 
-enum OperationDirection {
-  horizontal,
-  vertical,
-}
+//TODO Axis enum'ı ile değiştir bunu
+// enum OperationDirection {
+//   ///from left to right or vice versa
+//   horizontal,
+
+//   ///from top to bottom or vice versa
+//   vertical,
+// }
