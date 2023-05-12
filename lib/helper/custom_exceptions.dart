@@ -1,5 +1,5 @@
 class AddOperationTimedOutException implements Exception {
-  String message;
+  final String message;
   AddOperationTimedOutException(this.message);
   @override
   String toString() {
@@ -8,7 +8,7 @@ class AddOperationTimedOutException implements Exception {
 }
 
 class ThereIsNotAnyAvailableMathOperationToFillException implements Exception {
-  String message;
+  final String message;
   ThereIsNotAnyAvailableMathOperationToFillException(this.message);
   @override
   String toString() {

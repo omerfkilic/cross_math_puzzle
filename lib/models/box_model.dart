@@ -2,11 +2,10 @@ import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:flutter/material.dart';
 
 class BoxModel {
-  Size size;
-
   String? value;
   BoxType boxType;
-  BoxCoordination coordination;
+  final Size size;
+  final BoxCoordination coordination;
   BoxModel({
     this.size = const Size(44, 44),
     this.value,
@@ -25,10 +24,10 @@ class BoxModel {
 
 class BoxCoordination {
   ///coordinate of x
-  int indexOfColumn;
+  final int indexOfColumn;
 
   ///coordinate of y
-  int indexOfRow;
+  final int indexOfRow;
   BoxCoordination({
     required this.indexOfColumn,
     required this.indexOfRow,

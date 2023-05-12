@@ -49,7 +49,7 @@ class _GamePageViewModel {
   //TODO yazdığımız logic 2 tane yarı dolu operation'nın çakıştığı durumlarda patlıyor çözüm bul!!!
   void fillBoxes() {
     MathOperationModel? fillableMathOperation;
-    List<MathOperationModel> filledMathOperationList = [];
+    final List<MathOperationModel> filledMathOperationList = [];
     //TODO try catch ekle
     for (var mathOperation in mathOperationsList) {
       if (mathOperation.areBoxesFilled) {
@@ -62,7 +62,7 @@ class _GamePageViewModel {
     if (fillableMathOperation == null) {
       throw ThereIsNotAnyAvailableMathOperationToFillException('There Is Not Any Available Math Operation To Fill');
     } else {
-      DateTime startDateTime = DateTime.now();
+      final DateTime startDateTime = DateTime.now();
 
       while (true) {
         int? firstNumber;
@@ -79,7 +79,7 @@ class _GamePageViewModel {
         }
         //for secondNumber
         for (var mathOperation in filledMathOperationList) {
-          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
               boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[2].coordination) && mathOperation.boxes[2].hasValue);
           if (filledBox != null) {
             secondNumber = int.tryParse(filledBox.value!);
@@ -88,7 +88,7 @@ class _GamePageViewModel {
         }
         //for result
         for (var mathOperation in filledMathOperationList) {
-          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
               boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[4].coordination) && mathOperation.boxes[4].hasValue);
           if (filledBox != null) {
             result = int.tryParse(filledBox.value!);
@@ -98,7 +98,7 @@ class _GamePageViewModel {
         ArithmeticOperatorTypes? arithmeticOperator;
         //for arithmeticOperator
         // for (var mathOperation in filledMathOperationList) {
-        //   BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+        //   final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
         //       boxModel.boxCoordination.isSameCoordination(fillableMathOperation!.boxes[3].boxCoordination) && mathOperation.boxes.first.hasValue);
         //   if (filledBox != null) {
         //     firstNumber = int.tryParse(filledBox.value!);
@@ -137,7 +137,7 @@ class _GamePageViewModel {
             result = firstNumber! + secondNumber!;
           }
           /////////////////////////
-          //if only two of values is null
+          //if only two of values are null
           //  x  y res
           //  0  0  1
           //  0  1  0
@@ -187,23 +187,23 @@ class _GamePageViewModel {
 
   void addOperation() {
     //DateTime for check timeout
-    DateTime startDateTime = DateTime.now();
+    final DateTime startDateTime = DateTime.now();
     //this while will loop until it creates newMathOperation or timed out!
     while (true) {
-      int columnIndex;
-      int rowIndex;
+      int? columnIndex;
+      int? rowIndex;
       //if mathOperationsList is empty first mathOperation will start from (1, 1)
       try {
         if (mathOperationsList.isEmpty) {
           columnIndex = 0;
           rowIndex = 0;
         } else {
-          BoxModel boxModel = mathOperationsList[_random.nextInt(mathOperationsList.length)].getBoxModelForCreateANewOperation();
+          final BoxModel boxModel = mathOperationsList[_random.nextInt(mathOperationsList.length)].getBoxModelForCreateANewOperation();
           columnIndex = boxModel.coordination.indexOfColumn;
           rowIndex = boxModel.coordination.indexOfRow;
         }
 
-        MathOperationModel newMathOperation = MathOperationModel(
+        final MathOperationModel newMathOperation = MathOperationModel(
           indexOfColumn: columnIndex,
           indexOfRow: rowIndex,
           operationDirection: Axis.values[_random.nextInt(2)],
@@ -270,8 +270,8 @@ class _GamePageViewModel {
       developer.log('returned false cause already mathOperationList has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
       return false;
     }
-    int columnIndex = newMathOperation.boxes.first.coordination.indexOfColumn;
-    int rowIndex = newMathOperation.boxes.first.coordination.indexOfRow;
+    final int columnIndex = newMathOperation.boxes.first.coordination.indexOfColumn;
+    final int rowIndex = newMathOperation.boxes.first.coordination.indexOfRow;
     switch (newMathOperation.operationDirection) {
       case Axis.vertical:
         if (columnIndex >= GamePage.columnSize - 4) {

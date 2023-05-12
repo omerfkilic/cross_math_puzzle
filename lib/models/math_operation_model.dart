@@ -5,8 +5,8 @@ import 'package:cross_math_puzzle/models/box_model.dart';
 import 'package:flutter/material.dart';
 
 class MathOperationModel {
-  List<BoxModel> boxes = [];
-  Axis operationDirection;
+  final List<BoxModel> boxes = [];
+  final Axis operationDirection;
   bool get areBoxesFilled => boxes.every((element) => element.hasValue);
 
   MathOperationModel({

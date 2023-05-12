@@ -13,8 +13,8 @@ part 'game_page_view_model.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
-  static int columnSize = 15;
-  static int rowSize = 15;
+  static const int columnSize = 15;
+  static const int rowSize = 15;
 
   @override
   State<GamePage> createState() => _GamePageState();
