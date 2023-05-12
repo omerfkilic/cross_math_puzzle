@@ -4,6 +4,7 @@ class _GamePageViewModel {
   _GamePageViewModel._();
   static _GamePageViewModel? _instant;
   static _GamePageViewModel get instant => _instant ??= _GamePageViewModel._();
+  final Random _random = Random();
 
   ///as seconds
   final int timeoutDuration = 2;
@@ -20,8 +21,7 @@ class _GamePageViewModel {
         List<BoxModel>.generate(
           rowSize,
           (indexOfRow) => BoxModel(
-            indexOfColumn: indexOfColumn,
-            indexOfRow: indexOfRow,
+            coordination: BoxCoordination(indexOfColumn: indexOfColumn, indexOfRow: indexOfRow),
           ),
         ),
       );
@@ -29,8 +29,163 @@ class _GamePageViewModel {
     developer.log('gameTable Prepared', name: 'prepareGameTable');
   }
 
+  ///restarts gameTable's values and boxTypes
+  void restartGameTable({required int columnSize, required int rowSize}) {
+    gameTable.clear();
+    prepareGameTable(columnSize: columnSize, rowSize: rowSize);
+    //adds mathOperations to gameTable
+    for (var mathOperation in mathOperationsList) {
+      for (var box in mathOperation.boxes) {
+        if (gameTable[box.coordination.indexOfColumn][box.coordination.indexOfRow].isEmpty) {
+          gameTable[box.coordination.indexOfColumn][box.coordination.indexOfRow].boxType = box.boxType;
+        }
+        if (mathOperation.areBoxesFilled) {
+          gameTable[box.coordination.indexOfColumn][box.coordination.indexOfRow].value = box.value;
+        }
+      }
+    }
+  }
+
+  //TODO yazdığımız logic 2 tane yarı dolu operation'nın çakıştığı durumlarda patlıyor çözüm bul!!!
+  void fillBoxes() {
+    MathOperationModel? fillableMathOperation;
+    List<MathOperationModel> filledMathOperationList = [];
+    //TODO try catch ekle
+    for (var mathOperation in mathOperationsList) {
+      if (mathOperation.areBoxesFilled) {
+        filledMathOperationList.add(mathOperation);
+      } else {
+        fillableMathOperation ??= mathOperation;
+      }
+    }
+
+    if (fillableMathOperation == null) {
+      throw ThereIsNotAnyAvailableMathOperationToFillException('There Is Not Any Available Math Operation To Fill');
+    } else {
+      DateTime startDateTime = DateTime.now();
+
+      while (true) {
+        int? firstNumber;
+        int? secondNumber;
+        int? result;
+        //for firstNumber
+        for (var mathOperation in filledMathOperationList) {
+          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+              boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[0].coordination) && mathOperation.boxes[0].hasValue);
+          if (filledBox != null) {
+            firstNumber = int.tryParse(filledBox.value!);
+            break;
+          }
+        }
+        //for secondNumber
+        for (var mathOperation in filledMathOperationList) {
+          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+              boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[2].coordination) && mathOperation.boxes[2].hasValue);
+          if (filledBox != null) {
+            secondNumber = int.tryParse(filledBox.value!);
+            break;
+          }
+        }
+        //for result
+        for (var mathOperation in filledMathOperationList) {
+          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+              boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[4].coordination) && mathOperation.boxes[4].hasValue);
+          if (filledBox != null) {
+            result = int.tryParse(filledBox.value!);
+            break;
+          }
+        }
+        ArithmeticOperatorTypes? arithmeticOperator;
+        //for arithmeticOperator
+        // for (var mathOperation in filledMathOperationList) {
+        //   BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
+        //       boxModel.boxCoordination.isSameCoordination(fillableMathOperation!.boxes[3].boxCoordination) && mathOperation.boxes.first.hasValue);
+        //   if (filledBox != null) {
+        //     firstNumber = int.tryParse(filledBox.value!);
+        //     break;
+        //   }
+        // }
+
+        arithmeticOperator ??= ArithmeticOperatorTypes.values[_random.nextInt(ArithmeticOperatorTypes.values.length)];
+
+        //TODO Bu algoritma sadece toplama için diğer işlemlerin de eklenmesi lazım
+        //Burayı while içinde döndürebiliriz
+
+        //if all values are null
+        if (firstNumber == null && secondNumber == null && result == null) {
+          firstNumber ??= _random.nextInt(25);
+          secondNumber ??= _random.nextInt(25);
+          result = firstNumber + secondNumber;
+          //if only one of values is null
+          //  x  y res
+          //  1  1  0
+          //  1  0  1
+          //  0  1  1
+        } else if ((firstNumber == null) ^ (secondNumber == null) ^ (result == null)) {
+          // x  y res
+          // 1  0  1
+          // 0  1  1
+          if (result != null) {
+            if (firstNumber == null) {
+              firstNumber = result - secondNumber!;
+            } else {
+              secondNumber = result - firstNumber;
+            }
+            // x  y res
+            // 1  1  0
+          } else {
+            result = firstNumber! + secondNumber!;
+          }
+          /////////////////////////
+          //if only two of values is null
+          //  x  y res
+          //  0  0  1
+          //  0  1  0
+          //  1  0  0
+        } else if ((firstNumber != null) ^ (secondNumber != null) ^ (result != null)) {
+          // x  y res
+          // 0  1  0
+          // 1  0  0
+          if (result == null) {
+            firstNumber ??= _random.nextInt(25);
+            secondNumber ??= _random.nextInt(25);
+            result = firstNumber + secondNumber;
+            // x  y res
+            // 0  0  1
+          } else {
+            firstNumber ??= _random.nextInt(result);
+            secondNumber = result - firstNumber;
+          }
+        }
+
+        // switch (arithmeticOperator) {
+        //   case ArithmeticOperatorTypes.addition:
+        //     result = firstNumber + secondNumber;
+        //     break;
+        //   case ArithmeticOperatorTypes.subtraction:
+        //     result = firstNumber - secondNumber;
+        //     break;
+        // }
+        if (result! % 1 == 0 && result > 0) {
+          fillableMathOperation.boxes[0].value = firstNumber.toString();
+          fillableMathOperation.boxes[1].value = arithmeticOperator.toString();
+          fillableMathOperation.boxes[2].value = secondNumber.toString();
+          fillableMathOperation.boxes[3].value = '=';
+          fillableMathOperation.boxes[4].value = result.toString();
+          break;
+        }
+        if (startDateTime.isBefore(DateTime.now().add(const Duration(seconds: -5)))) {
+          //TODO log ekle
+          if (kDebugMode) {
+            print('timed out');
+          }
+          break;
+        }
+      }
+    }
+  }
+
   void addOperation() {
-    Random rnd = Random();
     //DateTime for check timeout
     DateTime startDateTime = DateTime.now();
     //this while will loop until it creates newMathOperation or timed out!
@@ -43,15 +198,15 @@ class _GamePageViewModel {
           columnIndex = 0;
           rowIndex = 0;
         } else {
-          BoxModel boxModel = mathOperationsList[rnd.nextInt(mathOperationsList.length)].getBoxModelForCreateANewOperation();
-          columnIndex = boxModel.indexOfColumn;
-          rowIndex = boxModel.indexOfRow;
+          BoxModel boxModel = mathOperationsList[_random.nextInt(mathOperationsList.length)].getBoxModelForCreateANewOperation();
+          columnIndex = boxModel.coordination.indexOfColumn;
+          rowIndex = boxModel.coordination.indexOfRow;
         }
 
         MathOperationModel newMathOperation = MathOperationModel(
           indexOfColumn: columnIndex,
           indexOfRow: rowIndex,
-          operationDirection: Axis.values[rnd.nextInt(2)],
+          operationDirection: Axis.values[_random.nextInt(2)],
         );
         developer.log('created newMathOperation x:$columnIndex y:$rowIndex direction:${newMathOperation.operationDirection.name}',
             name: 'addOperation');
@@ -60,18 +215,18 @@ class _GamePageViewModel {
         //true means newMathOperation can be added to table
         {
           developer.log('newMathOperation passed isPossibleChecks!', name: 'addOperation');
-          for (var index = 0; index < 5; index++) {
-            switch (newMathOperation.operationDirection) {
-              case Axis.vertical:
-                gameTable[columnIndex + index][rowIndex] = newMathOperation.boxes[index];
-                break;
-              case Axis.horizontal:
-                gameTable[columnIndex][rowIndex + index] = newMathOperation.boxes[index];
-                break;
-            }
-          }
+          // for (var index = 0; index < 5; index++) {
+          //   switch (newMathOperation.operationDirection) {
+          //     case Axis.vertical:
+          //       gameTable[columnIndex + index][rowIndex] = newMathOperation.boxes[index];
+          //       break;
+          //     case Axis.horizontal:
+          //       gameTable[columnIndex][rowIndex + index] = newMathOperation.boxes[index];
+          //       break;
+          //   }
+          // }
+          // developer.log('newMathOperation added to gameTable!', name: 'addOperation');
           mathOperationsList.add(newMathOperation);
-          developer.log('newMathOperation added to gameTable!', name: 'addOperation');
           developer.log('///////////////////////////////////////', name: '--');
           break;
         } else {
@@ -86,7 +241,7 @@ class _GamePageViewModel {
       if (startDateTime.isBefore(DateTime.now().add(Duration(seconds: -timeoutDuration)))) {
         developer.log('addOperation function timed out!!', name: 'addOperation');
 
-        throw AddOperationTimedOut('Add Operation Timed Out');
+        throw AddOperationTimedOutException('Add Operation Timed Out');
       }
     }
   }
@@ -95,7 +250,9 @@ class _GamePageViewModel {
   void restart() {
     for (int i = 0; i < gameTable.length; i++) {
       for (var j = 0; j < gameTable[1].length; j++) {
-        gameTable[i][j] = BoxModel(indexOfColumn: i, indexOfRow: j);
+        gameTable[i][j] = BoxModel(
+          coordination: BoxCoordination(indexOfColumn: i, indexOfRow: i),
+        );
       }
     }
     mathOperationsList.clear();
@@ -107,13 +264,14 @@ class _GamePageViewModel {
     required MathOperationModel newMathOperation,
   }) {
     //Checks if mathOperationList has newMathOperation already
-    if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.boxes.first.isPositionSame(newMathOperation.boxes.first) &&
-        mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
+    if (mathOperationsList.any((mathOperationModel) =>
+        (mathOperationModel.boxes.first.coordination.isSameCoordination(newMathOperation.boxes.first.coordination) &&
+            mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
       developer.log('returned false cause already mathOperationList has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
       return false;
     }
-    int columnIndex = newMathOperation.boxes.first.indexOfColumn;
-    int rowIndex = newMathOperation.boxes.first.indexOfRow;
+    int columnIndex = newMathOperation.boxes.first.coordination.indexOfColumn;
+    int rowIndex = newMathOperation.boxes.first.coordination.indexOfRow;
     switch (newMathOperation.operationDirection) {
       case Axis.vertical:
         if (columnIndex >= GamePage.columnSize - 4) {
@@ -122,7 +280,7 @@ class _GamePageViewModel {
         }
         for (var index = 0; index < 5; index++) {
           if ((!gameTable[columnIndex + index][rowIndex].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
-              !gameTable[columnIndex + index][rowIndex].isEmpty) {
+              gameTable[columnIndex + index][rowIndex].isNotEmpty) {
             developer.log('returned false cause newMathOperation\'s box(${columnIndex + index}, $rowIndex) wont matched gameTables box',
                 name: 'isPossibleToAddNewOperationFunction');
             return false;
@@ -141,7 +299,7 @@ class _GamePageViewModel {
         }
         for (var index = 0; index < 5; index++) {
           if ((!gameTable[columnIndex][rowIndex + index].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
-              !gameTable[columnIndex][rowIndex + index].isEmpty) {
+              gameTable[columnIndex][rowIndex + index].isNotEmpty) {
             developer.log('returned false cause newMathOperation\'s box($columnIndex , ${rowIndex + index}) wont matched gameTables box',
                 name: 'isPossibleToAddNewOperationFunction');
             return false;
@@ -154,14 +312,5 @@ class _GamePageViewModel {
         developer.log('returned false cause newMathOperations next box isn\'t empty', name: 'isPossibleToAddNewOperationFunction');
         return false;
     }
-  }
-}
-
-class AddOperationTimedOut implements Exception {
-  String message;
-  AddOperationTimedOut(this.message);
-  @override
-  String toString() {
-    return "Exception: $message";
   }
 }

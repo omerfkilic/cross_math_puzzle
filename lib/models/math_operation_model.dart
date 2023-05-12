@@ -1,19 +1,24 @@
 import 'dart:math';
 
-import 'package:cross_math_puzzle/models/box/box_model.dart';
+import 'package:cross_math_puzzle/helper/enums.dart';
+import 'package:cross_math_puzzle/models/box_model.dart';
 import 'package:flutter/material.dart';
 
 class MathOperationModel {
   List<BoxModel> boxes = [];
   Axis operationDirection;
+  bool get areBoxesFilled => boxes.every((element) => element.hasValue);
 
-  MathOperationModel({required int indexOfColumn, required int indexOfRow, required this.operationDirection}) {
+  MathOperationModel({
+    required int indexOfColumn,
+    required int indexOfRow,
+    required this.operationDirection,
+  }) {
     switch (operationDirection) {
       case Axis.vertical:
         for (var index = 0; index < 5; index++) {
           boxes.add(BoxModel(
-            indexOfColumn: indexOfColumn + index,
-            indexOfRow: indexOfRow,
+            coordination: BoxCoordination(indexOfColumn: indexOfColumn + index, indexOfRow: indexOfRow),
             boxType: _findBoxType(index),
           ));
         }
@@ -21,8 +26,7 @@ class MathOperationModel {
       case Axis.horizontal:
         for (var index = 0; index < 5; index++) {
           boxes.add(BoxModel(
-            indexOfColumn: indexOfColumn,
-            indexOfRow: indexOfRow + index,
+            coordination: BoxCoordination(indexOfColumn: indexOfColumn, indexOfRow: indexOfRow + index),
             boxType: _findBoxType(index),
           ));
         }
