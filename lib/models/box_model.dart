@@ -1,4 +1,5 @@
 import 'package:cross_math_puzzle/helper/enums.dart';
+import 'package:cross_math_puzzle/models/math_operation_model.dart';
 import 'package:flutter/material.dart';
 
 class BoxModel {
@@ -6,6 +7,7 @@ class BoxModel {
   BoxType boxType;
   final Size size;
   final BoxCoordination coordination;
+  List<MathOperationModel> connectedMathOperations = <MathOperationModel>[];
   BoxModel({
     this.size = const Size(44, 44),
     this.value,

@@ -30,12 +30,6 @@ class _GamePageState extends State<GamePage> {
   }
 
   @override
-  void setState(VoidCallback fn) {
-    super.setState(fn);
-    viewModel.restartGameTable(columnSize: GamePage.columnSize, rowSize: GamePage.rowSize);
-  }
-
-  @override
   Widget build(BuildContext context) {
     //TODO yatayda da scrollable yap
     return Scaffold(
@@ -123,7 +117,7 @@ class _GamePageState extends State<GamePage> {
               icon: const Icon(Icons.add)),
           IconButton(
             onPressed: () => setState(() {
-              viewModel.restart();
+              viewModel.restartGameData(columnSize: GamePage.columnSize, rowSize: GamePage.rowSize);
             }),
             icon: const Icon(Icons.restart_alt),
           ),
@@ -152,7 +146,7 @@ class _GamePageState extends State<GamePage> {
                         color: (viewModel.gameTable[indexOfColumn][indexOfRow].isNotEmpty)
                             ? viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.number
                                 ? Colors.blue
-                                : viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.result
+                                : viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.equalMark
                                     ? Colors.amber
                                     : Colors.red
                             : Colors.grey.shade400,
@@ -160,7 +154,7 @@ class _GamePageState extends State<GamePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            //coordination of box
+                            //coordinate of box
                             Text(
                               '$indexOfColumn : $indexOfRow',
                               style: const TextStyle(fontSize: 12),

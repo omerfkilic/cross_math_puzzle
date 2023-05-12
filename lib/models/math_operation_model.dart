@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 class MathOperationModel {
   final List<BoxModel> boxes = [];
   final Axis operationDirection;
+
+  ///returns if all boxes filled
   bool get areBoxesFilled => boxes.every((element) => element.hasValue);
 
   MathOperationModel({
@@ -33,7 +35,8 @@ class MathOperationModel {
         break;
     }
   }
-
+  //TODO Bu fonksiyon için daha mantıklı bir şey düşün
+  //Bu işlem için bir method yaratmak çok mantıklı değil gibi düşün bunu!
   BoxModel getBoxModelForCreateANewOperation() {
     switch (Random().nextInt(5)) {
       case 0:
@@ -52,8 +55,6 @@ BoxType _findBoxType(int index) {
     return BoxType.arithmeticOperator;
   } else if (index == 3) {
     return BoxType.equalMark;
-  } else if (index == 4) {
-    return BoxType.result;
   } else {
     return BoxType.number;
   }

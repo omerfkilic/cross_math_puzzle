@@ -26,24 +26,7 @@ class _GamePageViewModel {
         ),
       );
     }
-    developer.log('gameTable Prepared', name: 'prepareGameTable');
-  }
-
-  ///restarts gameTable's values and boxTypes
-  void restartGameTable({required int columnSize, required int rowSize}) {
-    gameTable.clear();
-    prepareGameTable(columnSize: columnSize, rowSize: rowSize);
-    //adds mathOperations to gameTable
-    for (var mathOperation in mathOperationsList) {
-      for (var box in mathOperation.boxes) {
-        if (gameTable[box.coordination.indexOfColumn][box.coordination.indexOfRow].isEmpty) {
-          gameTable[box.coordination.indexOfColumn][box.coordination.indexOfRow].boxType = box.boxType;
-        }
-        if (mathOperation.areBoxesFilled) {
-          gameTable[box.coordination.indexOfColumn][box.coordination.indexOfRow].value = box.value;
-        }
-      }
-    }
+    developer.log('gameTable Prepared!', name: 'prepareGameTable');
   }
 
   //TODO yazdığımız logic 2 tane yarı dolu operation'nın çakıştığı durumlarda patlıyor çözüm bul!!!
@@ -208,30 +191,35 @@ class _GamePageViewModel {
           indexOfRow: rowIndex,
           operationDirection: Axis.values[_random.nextInt(2)],
         );
-        developer.log('created newMathOperation x:$columnIndex y:$rowIndex direction:${newMathOperation.operationDirection.name}',
-            name: 'addOperation');
-        //isPossibleChecks
+        developer.log('created newMathOperation ($columnIndex, $rowIndex ${newMathOperation.operationDirection.name})', name: 'addOperation');
+
         if (_isPossibleToAddNewOperation(newMathOperation: newMathOperation))
         //true means newMathOperation can be added to table
         {
-          developer.log('newMathOperation passed isPossibleChecks!', name: 'addOperation');
-          // for (var index = 0; index < 5; index++) {
-          //   switch (newMathOperation.operationDirection) {
-          //     case Axis.vertical:
-          //       gameTable[columnIndex + index][rowIndex] = newMathOperation.boxes[index];
-          //       break;
-          //     case Axis.horizontal:
-          //       gameTable[columnIndex][rowIndex + index] = newMathOperation.boxes[index];
-          //       break;
-          //   }
-          // }
-          // developer.log('newMathOperation added to gameTable!', name: 'addOperation');
+          developer.log('newMathOperation passed isPossibleToAddNewOperation! It will add to gameTable', name: 'addOperation');
+          for (var index = 0; index < 5; index++) {
+            final BoxModel gameTablesBox;
+            switch (newMathOperation.operationDirection) {
+              case Axis.vertical:
+                gameTablesBox = gameTable[columnIndex + index][rowIndex];
+                break;
+              case Axis.horizontal:
+                gameTablesBox = gameTable[columnIndex][rowIndex + index];
+                break;
+            }
+            if (gameTablesBox.boxType == BoxType.empty) {
+              gameTablesBox.boxType = newMathOperation.boxes[index].boxType;
+            }
+            newMathOperation.boxes[index] = gameTablesBox;
+            gameTablesBox.connectedMathOperations.add(newMathOperation);
+          }
           mathOperationsList.add(newMathOperation);
+
           developer.log('///////////////////////////////////////', name: '--');
           break;
         } else {
-          //else means newMathOperation can't be added to table
-          developer.log('newMathOperation wont passed isPossibleChecks!', name: 'addOperation');
+          //else means newMathOperation cannot be added to table
+          developer.log('newMathOperation won\'t passed isPossibleChecks!', name: 'addOperation');
         }
       } on Exception {
         developer.log('An Exception Occurred', name: 'addOperation');
@@ -247,22 +235,15 @@ class _GamePageViewModel {
   }
 
   ///clears [gameTable] and [mathOperationsList]
-  void restart() {
-    for (int i = 0; i < gameTable.length; i++) {
-      for (var j = 0; j < gameTable[1].length; j++) {
-        gameTable[i][j] = BoxModel(
-          coordination: BoxCoordination(indexOfColumn: i, indexOfRow: i),
-        );
-      }
-    }
+  void restartGameData({required int columnSize, required int rowSize}) {
+    gameTable.clear();
     mathOperationsList.clear();
-    developer.log('Cleared gameTable and mathOperationsList', name: 'restartFunction');
+    developer.log('Cleared gameTable and mathOperationsList!', name: 'restartFunction');
+    prepareGameTable(columnSize: columnSize, rowSize: rowSize);
   }
 
-  ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]s
-  bool _isPossibleToAddNewOperation({
-    required MathOperationModel newMathOperation,
-  }) {
+  ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]'s
+  bool _isPossibleToAddNewOperation({required MathOperationModel newMathOperation}) {
     //Checks if mathOperationList has newMathOperation already
     if (mathOperationsList.any((mathOperationModel) =>
         (mathOperationModel.boxes.first.coordination.isSameCoordination(newMathOperation.boxes.first.coordination) &&
@@ -270,14 +251,17 @@ class _GamePageViewModel {
       developer.log('returned false cause already mathOperationList has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
       return false;
     }
+
     final int columnIndex = newMathOperation.boxes.first.coordination.indexOfColumn;
     final int rowIndex = newMathOperation.boxes.first.coordination.indexOfRow;
+
     switch (newMathOperation.operationDirection) {
       case Axis.vertical:
         if (columnIndex >= GamePage.columnSize - 4) {
           developer.log('returned false cause newMathOperation will pass the gameTable border', name: 'isPossibleToAddNewOperationFunction');
           return false;
         }
+
         for (var index = 0; index < 5; index++) {
           if ((!gameTable[columnIndex + index][rowIndex].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
               gameTable[columnIndex + index][rowIndex].isNotEmpty) {
@@ -286,17 +270,21 @@ class _GamePageViewModel {
             return false;
           }
         }
+
         if (columnIndex <= GamePage.columnSize - 6 && gameTable[columnIndex + 5][rowIndex].isEmpty) {
           developer.log('returned true', name: 'isPossibleToAddNewOperationFunction');
           return true;
         }
+
         developer.log('returned false cause newMathOperations next box isn\'t empty', name: 'isPossibleToAddNewOperationFunction');
         return false;
+
       case Axis.horizontal:
         if (rowIndex >= GamePage.rowSize - 4) {
           developer.log('returned false cause newMathOperation will pass the gameTable border', name: 'isPossibleToAddNewOperationFunction');
           return false;
         }
+
         for (var index = 0; index < 5; index++) {
           if ((!gameTable[columnIndex][rowIndex + index].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
               gameTable[columnIndex][rowIndex + index].isNotEmpty) {
@@ -305,10 +293,12 @@ class _GamePageViewModel {
             return false;
           }
         }
+
         if (rowIndex <= GamePage.rowSize - 6 && gameTable[columnIndex][rowIndex + 5].isEmpty) {
           developer.log('returned true', name: 'isPossibleToAddNewOperationFunction');
           return true;
         }
+
         developer.log('returned false cause newMathOperations next box isn\'t empty', name: 'isPossibleToAddNewOperationFunction');
         return false;
     }

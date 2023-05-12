@@ -1,6 +1,5 @@
 enum BoxType {
   number,
-  result,
   arithmeticOperator,
   equalMark,
   empty,
@@ -53,15 +52,5 @@ enum ArithmeticOperatorTypes {
 }
 
 extension BoxTypeExtension on BoxType {
-  bool isEqual(BoxType boxType) {
-    switch (this) {
-      case BoxType.number:
-      case BoxType.result:
-        return boxType == BoxType.number || boxType == BoxType.result;
-      case BoxType.arithmeticOperator:
-      case BoxType.equalMark:
-      case BoxType.empty:
-        return boxType == this;
-    }
-  }
+  bool isEqual(BoxType boxType) => boxType == this;
 }
