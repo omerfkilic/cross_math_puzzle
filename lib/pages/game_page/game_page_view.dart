@@ -45,33 +45,15 @@ class _GamePageState extends State<GamePage> {
                     viewModel.fillBoxes();
                   });
                 } on ThereIsNotAnyAvailableMathOperationToFillException {
-                  showDialog(
+                  _showCErrorDialog(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('There Is Not Any Available Math Operation To Fill!'),
-                      content: const Text('Can\'t find any operation addable numbers!\nPlease add free operation first!'),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Done'),
-                        ),
-                      ],
-                    ),
+                    titleWidget: const Text('There Is Not Any Available Math Operation To Fill!'),
+                    contentWidget: const Text('Can\'t find any operation addable numbers!\nPlease add free operation first!'),
                   );
                 } catch (e) {
-                  //TODO catch (e) için custom showDialog yaz
-                  showDialog(
+                  _showCErrorDialog(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('An Exception Occurred!'),
-                      content: Text(e.toString()),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Done'),
-                        ),
-                      ],
-                    ),
+                    titleWidget: const Text('An Exception Occurred!'),
                   );
                 }
               }
@@ -85,32 +67,15 @@ class _GamePageState extends State<GamePage> {
                     viewModel.addOperation();
                   });
                 } on AddOperationTimedOutException {
-                  showDialog(
+                  _showCErrorDialog(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Add Math Operation timed out!'),
-                      content: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Done'),
-                        ),
-                      ],
-                    ),
+                    titleWidget: const Text('Add Math Operation timed out!'),
+                    contentWidget: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
                   );
                 } catch (e) {
-                  showDialog(
+                  _showCErrorDialog(
                     context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('An Exception Occurred!'),
-                      content: Text(e.toString()),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Done'),
-                        ),
-                      ],
-                    ),
+                    titleWidget: const Text('An Exception Occurred!'),
                   );
                 }
               },
@@ -180,4 +145,24 @@ class _GamePageState extends State<GamePage> {
       ),
     );
   }
+}
+
+Future<T?> _showCErrorDialog<T>({
+  required BuildContext context,
+  required Widget titleWidget,
+  Widget? contentWidget,
+}) async {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: titleWidget,
+      content: contentWidget,
+      actions: [
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Done'),
+        ),
+      ],
+    ),
+  );
 }
