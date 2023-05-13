@@ -53,8 +53,8 @@ class _GamePageViewModel {
         int? result;
         //for firstNumber
         for (var mathOperation in filledMathOperationList) {
-          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
-              boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[0].coordination) && mathOperation.boxes[0].hasValue);
+          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
+              (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[0]) && mathOperation.boxes[0].hasValue);
           if (filledBox != null) {
             firstNumber = int.tryParse(filledBox.value!);
             break;
@@ -62,8 +62,8 @@ class _GamePageViewModel {
         }
         //for secondNumber
         for (var mathOperation in filledMathOperationList) {
-          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
-              boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[2].coordination) && mathOperation.boxes[2].hasValue);
+          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
+              (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[2]) && mathOperation.boxes[2].hasValue);
           if (filledBox != null) {
             secondNumber = int.tryParse(filledBox.value!);
             break;
@@ -71,8 +71,8 @@ class _GamePageViewModel {
         }
         //for result
         for (var mathOperation in filledMathOperationList) {
-          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
-              boxModel.coordination.isSameCoordination(fillableMathOperation!.boxes[4].coordination) && mathOperation.boxes[4].hasValue);
+          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
+              (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[4]) && mathOperation.boxes[4].hasValue);
           if (filledBox != null) {
             result = int.tryParse(filledBox.value!);
             break;
@@ -82,7 +82,7 @@ class _GamePageViewModel {
         //for arithmeticOperator
         // for (var mathOperation in filledMathOperationList) {
         //   final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
-        //       boxModel.boxCoordination.isSameCoordination(fillableMathOperation!.boxes[3].boxCoordination) && mathOperation.boxes.first.hasValue);
+        //       boxModel.isSameCoordination(fillableMathOperation!.boxes[3]) && mathOperation.boxes.first.hasValue);
         //   if (filledBox != null) {
         //     firstNumber = int.tryParse(filledBox.value!);
         //     break;
@@ -245,9 +245,8 @@ class _GamePageViewModel {
   ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]'s
   bool _isPossibleToAddNewOperation({required MathOperationModel newMathOperation}) {
     //Checks if mathOperationList has newMathOperation already
-    if (mathOperationsList.any((mathOperationModel) =>
-        (mathOperationModel.boxes.first.coordination.isSameCoordination(newMathOperation.boxes.first.coordination) &&
-            mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
+    if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.boxes.first.isSameCoordination(newMathOperation.boxes.first) &&
+        mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
       developer.log('returned false cause already mathOperationList has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
       return false;
     }
@@ -271,13 +270,8 @@ class _GamePageViewModel {
           }
         }
 
-        if (columnIndex <= GamePage.columnSize - 6 && gameTable[columnIndex + 5][rowIndex].isEmpty) {
-          developer.log('returned true', name: 'isPossibleToAddNewOperationFunction');
-          return true;
-        }
-
-        developer.log('returned false cause newMathOperations next box isn\'t empty', name: 'isPossibleToAddNewOperationFunction');
-        return false;
+        developer.log('returned true', name: 'isPossibleToAddNewOperationFunction');
+        return true;
 
       case Axis.horizontal:
         if (rowIndex >= GamePage.rowSize - 4) {
@@ -294,13 +288,8 @@ class _GamePageViewModel {
           }
         }
 
-        if (rowIndex <= GamePage.rowSize - 6 && gameTable[columnIndex][rowIndex + 5].isEmpty) {
-          developer.log('returned true', name: 'isPossibleToAddNewOperationFunction');
-          return true;
-        }
-
-        developer.log('returned false cause newMathOperations next box isn\'t empty', name: 'isPossibleToAddNewOperationFunction');
-        return false;
+        developer.log('returned true', name: 'isPossibleToAddNewOperationFunction');
+        return true;
     }
   }
 }

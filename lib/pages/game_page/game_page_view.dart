@@ -1,13 +1,14 @@
+import 'dart:developer' as developer;
 import 'dart:math';
+
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:cross_math_puzzle/helper/custom_exceptions.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:cross_math_puzzle/models/box_model.dart';
 import 'package:cross_math_puzzle/models/math_operation_model.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
-import 'dart:developer' as developer;
 
 part 'game_page_view_model.dart';
 
@@ -31,7 +32,6 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO yatayda da scrollable yap
     return Scaffold(
       appBar: AppBar(
         title: const Text('Material App Bar'),
@@ -88,58 +88,62 @@ class _GamePageState extends State<GamePage> {
           ),
         ],
       ),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+      body: Container(
+        padding: const EdgeInsets.all(15),
+        alignment: Alignment.center,
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              ...List.generate(
-                viewModel.gameTable.length,
-                (indexOfColumn) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: List.generate(
-                      viewModel.gameTable[indexOfColumn].length,
-                      (indexOfRow) => Container(
-                        width: viewModel.gameTable[indexOfColumn][indexOfRow].size.width,
-                        height: viewModel.gameTable[indexOfColumn][indexOfRow].size.height,
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        margin: const EdgeInsets.all(2),
-                        color: (viewModel.gameTable[indexOfColumn][indexOfRow].isNotEmpty)
-                            ? viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.number
-                                ? Colors.blue
-                                : viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.equalMark
-                                    ? Colors.amber
-                                    : Colors.red
-                            : Colors.grey.shade400,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            //coordinate of box
-                            Text(
-                              '$indexOfColumn : $indexOfRow',
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            //box's value or boxType
-                            Text(
-                              viewModel.gameTable[indexOfColumn][indexOfRow].value ?? viewModel.gameTable[indexOfColumn][indexOfRow].boxType.name,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+                ...List.generate(
+                  viewModel.gameTable.length,
+                  (indexOfColumn) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: List.generate(
+                        viewModel.gameTable[indexOfColumn].length,
+                        (indexOfRow) => Container(
+                          width: viewModel.gameTable[indexOfColumn][indexOfRow].size.width,
+                          height: viewModel.gameTable[indexOfColumn][indexOfRow].size.height,
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          margin: const EdgeInsets.all(2),
+                          color: (viewModel.gameTable[indexOfColumn][indexOfRow].isNotEmpty)
+                              ? viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.number
+                                  ? Colors.blue
+                                  : viewModel.gameTable[indexOfColumn][indexOfRow].boxType == BoxType.equalMark
+                                      ? Colors.amber
+                                      : Colors.red
+                              : Colors.grey.shade400,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              //coordinate of box
+                              Text(
+                                '$indexOfColumn : $indexOfRow',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              //box's value or boxType
+                              Text(
+                                viewModel.gameTable[indexOfColumn][indexOfRow].value ?? viewModel.gameTable[indexOfColumn][indexOfRow].boxType.name,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 25),
-            ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),
@@ -147,7 +151,7 @@ class _GamePageState extends State<GamePage> {
   }
 }
 
-Future<T?> _showCErrorDialog<T>({
+Future _showCErrorDialog({
   required BuildContext context,
   required Widget titleWidget,
   Widget? contentWidget,

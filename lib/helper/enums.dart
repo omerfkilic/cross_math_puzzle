@@ -46,7 +46,6 @@ enum ArithmeticOperatorTypes {
       //   ArithmeticOperatorTypes.division;
       //   break;
     }
-    //TODO custom exception yaz yada farklı bir şeyler düşün
     throw Exception();
   }
 }

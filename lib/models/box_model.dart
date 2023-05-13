@@ -22,6 +22,8 @@ class BoxModel {
   bool get isNotEmpty => !isEmpty;
 
   bool get hasValue => !(value == null || value!.isEmpty);
+
+  bool isSameCoordination(BoxModel boxModel) => coordination._isSameCoordination(boxModel.coordination);
 }
 
 class BoxCoordination {
@@ -36,6 +38,6 @@ class BoxCoordination {
   });
 
   ///returns boxCoordination.indexOfColumn == this.indexOfColumn && boxCoordination.indexOfRow == this.indexOfRow
-  bool isSameCoordination(BoxCoordination boxCoordination) =>
+  bool _isSameCoordination(BoxCoordination boxCoordination) =>
       boxCoordination.indexOfColumn == indexOfColumn && boxCoordination.indexOfRow == indexOfRow;
 }

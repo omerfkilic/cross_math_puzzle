@@ -10,10 +10,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Material App',
+      theme: ThemeData(
+        scrollbarTheme: const ScrollbarThemeData(
+          thickness: MaterialStatePropertyAll(0),
+        ),
+      ),
       debugShowCheckedModeBanner: false,
-      home: GamePage(),
+      home: const GamePage(),
     );
   }
 }
