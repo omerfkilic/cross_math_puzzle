@@ -37,7 +37,7 @@ class MathOperationModel {
   }
   //TODO Bu fonksiyon için daha mantıklı bir şey düşün
   //Bu işlem için bir method yaratmak çok mantıklı değil gibi düşün bunu!
-  BoxModel getBoxModelForCreateANewOperation() {
+  BoxModel findBoxForCreateANewOperation() {
     switch (Random().nextInt(5)) {
       case 0:
         return boxes[0];
@@ -48,7 +48,8 @@ class MathOperationModel {
         return boxes[4];
     }
   }
-  //TODO toString override yaz başlangıç koordinatları ve yönü için
+
+  String get getInfo => '(${boxes.first.coordination.indexOfColumn}, ${boxes.first.coordination.indexOfColumn} , ${operationDirection.name})';
 
   void deleteOperationValues() {
     for (BoxModel box in boxes) {

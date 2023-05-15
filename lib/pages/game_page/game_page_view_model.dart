@@ -195,7 +195,7 @@ class _GamePageViewModel {
           columnIndex = 0;
           rowIndex = 0;
         } else {
-          final BoxModel boxModel = mathOperationsList[_random.nextInt(mathOperationsList.length)].getBoxModelForCreateANewOperation();
+          final BoxModel boxModel = mathOperationsList[_random.nextInt(mathOperationsList.length)].findBoxForCreateANewOperation();
           columnIndex = boxModel.coordination.indexOfColumn;
           rowIndex = boxModel.coordination.indexOfRow;
         }
@@ -205,7 +205,7 @@ class _GamePageViewModel {
           indexOfRow: rowIndex,
           operationDirection: Axis.values[_random.nextInt(2)],
         );
-        developer.log('created newMathOperation ($columnIndex, $rowIndex ${newMathOperation.operationDirection.name})', name: 'addOperation');
+        developer.log('created newMathOperation ${newMathOperation.getInfo}', name: 'addOperation');
 
         if (_isPossibleToAddNewOperation(newMathOperation: newMathOperation))
         //true means newMathOperation can be added to table
@@ -272,7 +272,7 @@ class _GamePageViewModel {
     //Checks if mathOperationList has newMathOperation already
     if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.boxes.first.isSameCoordination(newMathOperation.boxes.first) &&
         mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
-      developer.log('returned false cause already mathOperationList has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
+      developer.log('returned false cause mathOperationList already has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
       return false;
     }
 
