@@ -29,7 +29,6 @@ class _GamePageViewModel {
     developer.log('gameTable Prepared!', name: 'prepareGameTable');
   }
 
-  //TODO yazdığımız logic 2 tane yarı dolu operation'nın çakıştığı durumlarda patlıyor çözüm bul!!!
   void fillBoxes() {
     MathOperationModel? fillableMathOperation;
     final List<MathOperationModel> filledMathOperationList = [];
@@ -39,6 +38,7 @@ class _GamePageViewModel {
         filledMathOperationList.add(mathOperation);
       } else {
         fillableMathOperation ??= mathOperation;
+        developer.log('Found one fillable MathOperation ', name: 'fillBoxes');
       }
     }
 
@@ -51,6 +51,7 @@ class _GamePageViewModel {
         int? firstNumber;
         int? secondNumber;
         int? result;
+
         //for firstNumber
         for (var mathOperation in filledMathOperationList) {
           BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
@@ -60,6 +61,7 @@ class _GamePageViewModel {
             break;
           }
         }
+
         //for secondNumber
         for (var mathOperation in filledMathOperationList) {
           final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
@@ -79,10 +81,11 @@ class _GamePageViewModel {
           }
         }
         ArithmeticOperatorTypes? arithmeticOperator;
-        //for arithmeticOperator
+        // for arithmeticOperator
+        // this for maybe will delete or not :) i wont decide yet
         // for (var mathOperation in filledMathOperationList) {
-        //   final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull((BoxModel boxModel) =>
-        //       boxModel.isSameCoordination(fillableMathOperation!.boxes[3]) && mathOperation.boxes.first.hasValue);
+        //   final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
+        //       (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[3]) && mathOperation.boxes[3].hasValue);
         //   if (filledBox != null) {
         //     firstNumber = int.tryParse(filledBox.value!);
         //     break;
@@ -90,15 +93,17 @@ class _GamePageViewModel {
         // }
 
         arithmeticOperator ??= ArithmeticOperatorTypes.values[_random.nextInt(ArithmeticOperatorTypes.values.length)];
+        developer.log('Filled all boxes which has another box has value at the same coordinate', name: 'fillBoxes');
 
-        //TODO Bu algoritma sadece toplama için diğer işlemlerin de eklenmesi lazım
-        //Burayı while içinde döndürebiliriz
-
+        //// This logic only for addition and subtraction, Other will add when i ready to write :)
+        ///////////////////
         //if all values are null
         if (firstNumber == null && secondNumber == null && result == null) {
           firstNumber ??= _random.nextInt(25);
           secondNumber ??= _random.nextInt(25);
-          result = firstNumber + secondNumber;
+          result = _solveOperation(first: firstNumber, second: secondNumber, arithmeticOperator: arithmeticOperator);
+
+          //////////////////////
           //if only one of values is null
           //  x  y res
           //  1  1  0
@@ -110,14 +115,14 @@ class _GamePageViewModel {
           // 0  1  1
           if (result != null) {
             if (firstNumber == null) {
-              firstNumber = result - secondNumber!;
+              firstNumber = _solveOperation(first: result, second: secondNumber!, arithmeticOperator: arithmeticOperator.reverse);
             } else {
-              secondNumber = result - firstNumber;
+              secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
             }
             // x  y res
             // 1  1  0
           } else {
-            result = firstNumber! + secondNumber!;
+            result = _solveOperation(first: firstNumber!, second: secondNumber!, arithmeticOperator: arithmeticOperator);
           }
           /////////////////////////
           //if only two of values are null
@@ -132,39 +137,48 @@ class _GamePageViewModel {
           if (result == null) {
             firstNumber ??= _random.nextInt(25);
             secondNumber ??= _random.nextInt(25);
-            result = firstNumber + secondNumber;
+            result = _solveOperation(first: firstNumber, second: secondNumber, arithmeticOperator: arithmeticOperator);
             // x  y res
             // 0  0  1
           } else {
             firstNumber ??= _random.nextInt(result);
-            secondNumber = result - firstNumber;
+            secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
           }
+          ///// this condition wont happened cause _checkThereAreTooMuchConnectedOperationException will ignore
+          //if didn't we will throw an exception for now
+          //This condition's logic will added when i ready to write this :)
+        } else if (firstNumber != null && secondNumber != null && result != null) {
+          throw Exception();
         }
 
-        // switch (arithmeticOperator) {
-        //   case ArithmeticOperatorTypes.addition:
-        //     result = firstNumber + secondNumber;
-        //     break;
-        //   case ArithmeticOperatorTypes.subtraction:
-        //     result = firstNumber - secondNumber;
-        //     break;
-        // }
         if (result! % 1 == 0 && result > 0) {
           fillableMathOperation.boxes[0].value = firstNumber.toString();
           fillableMathOperation.boxes[1].value = arithmeticOperator.toString();
           fillableMathOperation.boxes[2].value = secondNumber.toString();
           fillableMathOperation.boxes[3].value = '=';
           fillableMathOperation.boxes[4].value = result.toString();
+          developer.log('Filled all missing values and added gameTable', name: 'fillBoxes');
+
           break;
         }
         if (startDateTime.isBefore(DateTime.now().add(const Duration(seconds: -5)))) {
-          //TODO log ekle
-          if (kDebugMode) {
-            print('timed out');
-          }
-          break;
+          developer.log('TimedOut!', name: 'fillBoxes');
+          throw FillBoxesTimedOutException('FillBoxes TimedOut!');
         }
       }
+    }
+  }
+
+  int _solveOperation({
+    required int first,
+    required int second,
+    required ArithmeticOperatorTypes arithmeticOperator,
+  }) {
+    switch (arithmeticOperator) {
+      case ArithmeticOperatorTypes.addition:
+        return first + second;
+      case ArithmeticOperatorTypes.subtraction:
+        return first - second;
     }
   }
 
@@ -175,7 +189,7 @@ class _GamePageViewModel {
     while (true) {
       int? columnIndex;
       int? rowIndex;
-      //if mathOperationsList is empty first mathOperation will start from (1, 1)
+      //if mathOperationsList is empty first mathOperation will start from (0, 0)
       try {
         if (mathOperationsList.isEmpty) {
           columnIndex = 0;
@@ -244,6 +258,17 @@ class _GamePageViewModel {
 
   ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]'s
   bool _isPossibleToAddNewOperation({required MathOperationModel newMathOperation}) {
+    /////////////////////
+    ///this check for there are too much connected operation exception
+    ///it will for a state i explained on check function
+    ///it will delete before full version
+    if (_checkThereAreTooMuchConnectedOperationException(newMathOperation: newMathOperation)) {
+      developer.log('returned false cause ThereAreTooMuchConnectedOperation! please restart game table!!',
+          name: 'isPossibleToAddNewOperationFunction');
+      return false;
+    }
+    /////////////////////
+
     //Checks if mathOperationList has newMathOperation already
     if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.boxes.first.isSameCoordination(newMathOperation.boxes.first) &&
         mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
@@ -292,4 +317,10 @@ class _GamePageViewModel {
         return true;
     }
   }
+
+  ///This check for all number filled but operation won't state
+  ///
+  ///This exception will deleted before full version
+  bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) =>
+      newMathOperation.boxes[0].hasValue && newMathOperation.boxes[2].hasValue && newMathOperation.boxes[4].hasValue;
 }

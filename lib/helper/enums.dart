@@ -10,7 +10,8 @@ enum ArithmeticOperatorTypes {
   addition,
 
   ///'-'
-  // subtraction,
+  subtraction,
+
   ///'*'
   // multiplication,
   ///'/'
@@ -22,8 +23,8 @@ enum ArithmeticOperatorTypes {
     switch (this) {
       case ArithmeticOperatorTypes.addition:
         return '+';
-      // case ArithmeticOperatorTypes.subtraction:
-      //   return '-';
+      case ArithmeticOperatorTypes.subtraction:
+        return '-';
       // case ArithmeticOperatorTypes.multiplication:
       //   return '*';
       // case ArithmeticOperatorTypes.division:
@@ -36,9 +37,9 @@ enum ArithmeticOperatorTypes {
       case '+':
         ArithmeticOperatorTypes.addition;
         break;
-      // case '-':
-      //   ArithmeticOperatorTypes.subtraction;
-      //   break;
+      case '-':
+        ArithmeticOperatorTypes.subtraction;
+        break;
       // case '*':
       //   ArithmeticOperatorTypes.multiplication;
       //   break;
@@ -47,6 +48,17 @@ enum ArithmeticOperatorTypes {
       //   break;
     }
     throw Exception();
+  }
+}
+
+extension ArithmeticOperatorTypesExtension on ArithmeticOperatorTypes {
+  ArithmeticOperatorTypes get reverse {
+    switch (this) {
+      case ArithmeticOperatorTypes.addition:
+        return ArithmeticOperatorTypes.subtraction;
+      case ArithmeticOperatorTypes.subtraction:
+        return ArithmeticOperatorTypes.addition;
+    }
   }
 }
 

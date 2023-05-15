@@ -48,6 +48,13 @@ class MathOperationModel {
         return boxes[4];
     }
   }
+  //TODO toString override yaz başlangıç koordinatları ve yönü için
+
+  void deleteOperationValues() {
+    for (BoxModel box in boxes) {
+      box.deleteBoxValue();
+    }
+  }
 }
 
 BoxType _findBoxType(int index) {

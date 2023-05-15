@@ -24,6 +24,11 @@ class BoxModel {
   bool get hasValue => !(value == null || value!.isEmpty);
 
   bool isSameCoordination(BoxModel boxModel) => coordination._isSameCoordination(boxModel.coordination);
+
+  void deleteBoxValue() {
+    value = '';
+    boxType = BoxType.empty;
+  }
 }
 
 class BoxCoordination {

@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cross_math_puzzle/helper/custom_exceptions.dart';
@@ -36,7 +35,6 @@ class _GamePageState extends State<GamePage> {
       appBar: AppBar(
         title: const Text('Material App Bar'),
         actions: [
-          //TODO IconButton yap bunu
           ElevatedButton(
             onPressed: () {
               if (viewModel.mathOperationsList.isNotEmpty) {
@@ -50,6 +48,12 @@ class _GamePageState extends State<GamePage> {
                     titleWidget: const Text('There Is Not Any Available Math Operation To Fill!'),
                     contentWidget: const Text('Can\'t find any operation addable numbers!\nPlease add free operation first!'),
                   );
+                } on FillBoxesTimedOutException {
+                  _showCErrorDialog(
+                    context: context,
+                    titleWidget: const Text('FillBoxes TimedOut'),
+                    contentWidget: const Text('FillBoxes TimedOut! \n Maybe there isn\'t any correctly fillable operation'),
+                  );
                 } catch (e) {
                   _showCErrorDialog(
                     context: context,
@@ -58,33 +62,36 @@ class _GamePageState extends State<GamePage> {
                 }
               }
             },
-            child: const Text('add first operations numbers'),
+            child: const Text('Fill Boxes'),
           ),
-          IconButton(
-              onPressed: () {
-                try {
-                  setState(() {
-                    viewModel.addOperation();
-                  });
-                } on AddOperationTimedOutException {
-                  _showCErrorDialog(
-                    context: context,
-                    titleWidget: const Text('Add Math Operation timed out!'),
-                    contentWidget: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
-                  );
-                } catch (e) {
-                  _showCErrorDialog(
-                    context: context,
-                    titleWidget: const Text('An Exception Occurred!'),
-                  );
-                }
-              },
-              icon: const Icon(Icons.add)),
-          IconButton(
+          const SizedBox(width: 5),
+          ElevatedButton(
+            onPressed: () {
+              try {
+                setState(() {
+                  viewModel.addOperation();
+                });
+              } on AddOperationTimedOutException {
+                _showCErrorDialog(
+                  context: context,
+                  titleWidget: const Text('Add Math Operation timed out!'),
+                  contentWidget: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
+                );
+              } catch (e) {
+                _showCErrorDialog(
+                  context: context,
+                  titleWidget: const Text('An Exception Occurred!'),
+                );
+              }
+            },
+            child: const Text('Add Operation'),
+          ),
+          const SizedBox(width: 5),
+          ElevatedButton(
             onPressed: () => setState(() {
               viewModel.restartGameData(columnSize: GamePage.columnSize, rowSize: GamePage.rowSize);
             }),
-            icon: const Icon(Icons.restart_alt),
+            child: const Text('Restart Game Table'),
           ),
         ],
       ),
