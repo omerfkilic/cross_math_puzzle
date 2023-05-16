@@ -26,6 +26,52 @@ class _GamePageViewModel {
     developer.log('gameTable Prepared!', name: 'prepareGameTable');
   }
 
+  int _findNumberBoxesCount() {
+    int count = 0;
+    for (var mathOperation in mathOperationsList) {
+      for (var box in mathOperation.boxes) {
+        if (box.boxType == BoxType.number) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+//TODO Oyun Zorluğunu ekleyip ona göre hideCount'ı ayarla
+  void hideNumbers() {
+    int hideCount = _findNumberBoxesCount() ~/ 3;
+    //TODO hiddenNumbers listesi viewModel'e taşınabilir
+    List<int> hiddenNumbers = [];
+    int index = 0;
+    final DateTime startDateTime = DateTime.now();
+    while (index <= hideCount) {
+      MathOperationModel selectedMathOperation = mathOperationsList.randomElement!;
+      BoxModel selectedBox = selectedMathOperation.numberBoxes.randomElement!;
+      if (!selectedBox.isHidden && !selectedMathOperation.isAllNumberBoxesHidden([selectedBox])) {
+        selectedBox.isHidden = true;
+        hiddenNumbers.add(selectedBox.valueAsInt!);
+        index++;
+      }
+      if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
+        developer.log('TimedOut!', name: 'hideNumbers');
+        throw HideNumbersTimedOutException('FillBoxes TimedOut!');
+      }
+    }
+    // After we hide all boxes, we have to check is possible to solve this puzzle.
+    //But i think we don't need this for now.
+    //i'll check this after.
+    //TODO puzzle'ın çözülebilir olduğunu anlama için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
+  }
+
+  void unHideNumbers() {
+    for (var mathOperation in mathOperationsList) {
+      for (var box in mathOperation.boxes) {
+        box.isHidden = false;
+      }
+    }
+  }
+
   void fillBoxes() {
     MathOperationModel? fillableMathOperation;
     final List<MathOperationModel> filledMathOperationList = [];
@@ -94,6 +140,13 @@ class _GamePageViewModel {
         arithmeticOperator ??= ArithmeticOperatorTypes.values.randomElement!;
         developer.log('Filled all boxes which has another box has value at the same coordinate', name: 'fillBoxes');
 
+        //TODO Burayı method olarak dışarı çıkartmamız lazım
+        //içine firstNumber, secondNumber, result'ı alır
+        //HiddenNumbers'ı da alır içine
+        //eğer hiddenNumber null değilse doldurması gereken number'ları bu listeden seçer yoksa random atar
+        //Bu şekilde hem fillBoxes'da hem de hideNumbers'da kullanabiliriz bunu
+        //Yada MathHelper diye bir class kurup tüm matematiksel işlemleri o class'ın içinde yapabiliriz
+
         //// This logic only for addition and subtraction, Other will add when i ready to write :)
         ///////////////////
         //if all values are null
@@ -160,7 +213,7 @@ class _GamePageViewModel {
 
           break;
         }
-        if (startDateTime.isBefore(DateTime.now().add(Duration(seconds: -CConsts.fillBoxesTimeOutDuration)))) {
+        if (startDateTime.isBefore(DateTime.now().add(CConsts.fillBoxesTimeOutDuration))) {
           developer.log('TimedOut!', name: 'fillBoxes');
           throw FillBoxesTimedOutException('FillBoxes TimedOut!');
         }
@@ -195,7 +248,7 @@ class _GamePageViewModel {
           indexOfColumn = CConsts.firstOperationStartCoordination.indexOfColumn;
           indexOfRow = CConsts.firstOperationStartCoordination.indexOfRow;
         } else {
-          final BoxModel boxModel = mathOperationsList.randomElement!.findBoxForCreateANewOperation();
+          final BoxModel boxModel = mathOperationsList.randomElement!.numberBoxes.randomElement!;
           indexOfColumn = boxModel.coordination.indexOfColumn;
           indexOfRow = boxModel.coordination.indexOfRow;
         }
@@ -240,7 +293,7 @@ class _GamePageViewModel {
         rethrow;
       }
       //true means function timed out
-      if (startDateTime.isBefore(DateTime.now().add(Duration(seconds: -CConsts.addOperationTimeOutDuration)))) {
+      if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
         developer.log('addOperation function timed out!!', name: 'addOperation');
 
         throw AddOperationTimedOutException('Add Operation Timed Out');
@@ -252,10 +305,9 @@ class _GamePageViewModel {
     for (var mathOperation in mathOperationsList) {
       if (mathOperation.isOperationCorrect == false) {
         throw OneOfTheOperationIsNotCorrectException('${mathOperation.getInfo} is not correct');
-      } else {
-        developer.log('All Filled Operations Are Correct', name: 'checkAllFilledOperationsAreCorrect');
       }
     }
+    developer.log('All Filled Operations Are Correct', name: 'checkAllFilledOperationsAreCorrect');
   }
 
   ///clears [gameTable] and [mathOperationsList]

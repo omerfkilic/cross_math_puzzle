@@ -10,6 +10,11 @@ class MathOperationModel {
 
   ///returns if all boxes filled
   bool get areBoxesFilled => boxes.every((element) => element.hasValue);
+  //TODO numberBoxes'ın koyulması gereken yerlere koy
+  List<BoxModel> get numberBoxes => [boxes[0], boxes[2], boxes[4]];
+
+  //TODO operatorBox'ın koyulması gereken yerlere koy
+  BoxModel get operatorBox => boxes[1];
 
   MathOperationModel({
     required int indexOfColumn,
@@ -35,23 +40,15 @@ class MathOperationModel {
         break;
     }
   }
-  //TODO Bu fonksiyon için daha mantıklı bir şey düşün
-  //Bu işlem için bir method yaratmak çok mantıklı değil gibi düşün bunu!
-  BoxModel findBoxForCreateANewOperation() {
-    switch (Random().nextInt(5)) {
-      case 0:
-        return boxes[0];
-      case 1:
-      case 2:
-        return boxes[2];
-      default:
-        return boxes[4];
-    }
-  }
+
+  ///if all numberBoxes are hidden except exceptedList has
+  bool isAllNumberBoxesHidden([List<BoxModel> exceptedList = const []]) => numberBoxes.every(
+        (numberBox) => (exceptedList.any((box) => box == numberBox) || numberBox.isHidden),
+      );
 
   ///if this.areBoxesFilled == false returns false
   ///
-  ///check is result of the transaction correct
+  ///checks is result of the transaction correct
   bool get isOperationCorrect {
     if (!areBoxesFilled) {
       return false;

@@ -1,11 +1,13 @@
 import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:cross_math_puzzle/models/math_operation_model.dart';
-import 'package:flutter/material.dart';
 
 class BoxModel {
   String? value;
   BoxType boxType;
   final BoxCoordination coordination;
+
+  ///means botType is BoxType.number and box has value but hidden for game
+  bool isHidden = false;
   Set<MathOperationModel> connectedMathOperations = <MathOperationModel>{};
   BoxModel({
     this.value,
@@ -21,10 +23,18 @@ class BoxModel {
 
   bool get hasValue => !(value == null || value!.isEmpty);
 
+  ///work if boxType == BoxType.number and hasValue
+  ///
+  ///Otherwise returns null
+  int? get valueAsInt {
+    if (boxType == BoxType.number) return int.tryParse(hasValue ? value! : '');
+    return null;
+  }
+
   bool isSameCoordination(BoxModel boxModel) => coordination._isSameCoordination(boxModel.coordination);
 
   void deleteBoxValue() {
-    value = '';
+    value = null;
     boxType = BoxType.empty;
   }
 }

@@ -16,6 +16,15 @@ class FillBoxesTimedOutException implements Exception {
   }
 }
 
+class HideNumbersTimedOutException implements Exception {
+  final String message;
+  HideNumbersTimedOutException(this.message);
+  @override
+  String toString() {
+    return "Exception: $message";
+  }
+}
+
 class OneOfTheOperationIsNotCorrectException implements Exception {
   final String message;
   OneOfTheOperationIsNotCorrectException(this.message);

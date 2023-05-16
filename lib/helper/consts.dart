@@ -6,11 +6,11 @@ class CConsts {
   static int gameTableColumnIndexSize = 15;
   static int gameTableRowIndexSize = 15;
 
-  ///as second
-  static int addOperationTimeOutDuration = 2;
+  ///2 second
+  static Duration addOperationTimeOutDuration = const Duration(seconds: -2);
 
-  ///as second
-  static int fillBoxesTimeOutDuration = 2;
+  ///5 second
+  static Duration fillBoxesTimeOutDuration = const Duration(seconds: -5);
 
   /// mathOperation number boxes value limit
   static int operationBoxNumberLimit = 25;

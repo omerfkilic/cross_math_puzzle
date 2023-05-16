@@ -37,6 +37,24 @@ class _GamePageState extends State<GamePage> {
         actions: [
           ElevatedButton(
             onPressed: () {
+              setState(() {
+                viewModel.unHideNumbers();
+              });
+            },
+            child: const Text('UnHide Numbers'),
+          ),
+          const SizedBox(width: 5),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                viewModel.hideNumbers();
+              });
+            },
+            child: const Text('Hide Numbers'),
+          ),
+          const SizedBox(width: 5),
+          ElevatedButton(
+            onPressed: () {
               if (viewModel.mathOperationsList.isNotEmpty) {
                 try {
                   setState(() {
@@ -55,11 +73,12 @@ class _GamePageState extends State<GamePage> {
                     contentWidget: Text(error.toString()),
                   );
                 }
+              } else {
+                _showCErrorDialog(
+                  context: context,
+                  titleWidget: const Text('There are no operation here'),
+                );
               }
-              _showCErrorDialog(
-                context: context,
-                titleWidget: const Text('There are no operation here'),
-              );
             },
             child: const Text('Check All Operations Correct'),
           ),
@@ -167,7 +186,10 @@ class _GamePageState extends State<GamePage> {
                               ),
                               //box's value or boxType
                               Text(
-                                viewModel.gameTable[indexOfColumn][indexOfRow].value ?? viewModel.gameTable[indexOfColumn][indexOfRow].boxType.name,
+                                viewModel.gameTable[indexOfColumn][indexOfRow].isHidden
+                                    ? 'hidden'
+                                    : viewModel.gameTable[indexOfColumn][indexOfRow].value ??
+                                        viewModel.gameTable[indexOfColumn][indexOfRow].boxType.name,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 12),
