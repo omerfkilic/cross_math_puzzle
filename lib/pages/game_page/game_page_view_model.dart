@@ -153,7 +153,7 @@ class _GamePageViewModel {
           throw Exception();
         }
 
-        if (result! % 1 == 0 && result > 0) {
+        if (result! % 1 == 0 && result >= 0 && firstNumber! >= 0 && secondNumber! >= 0) {
           fillableMathOperation.boxes[0].value = firstNumber.toString();
           fillableMathOperation.boxes[1].value = arithmeticOperator.toString();
           fillableMathOperation.boxes[2].value = secondNumber.toString();
@@ -167,6 +167,7 @@ class _GamePageViewModel {
           developer.log('TimedOut!', name: 'fillBoxes');
           throw FillBoxesTimedOutException('FillBoxes TimedOut!');
         }
+        developer.log('New filled operation didn\'t fit gameTable', name: 'fillBoxes');
       }
     }
   }
@@ -250,6 +251,16 @@ class _GamePageViewModel {
     }
   }
 
+  void checkAllFilledOperationsAreCorrect() {
+    for (var mathOperation in mathOperationsList) {
+      if (mathOperation.isOperationCorrect == false) {
+        throw OneOfTheOperationIsNotCorrectException('${mathOperation.getInfo} is not correct');
+      } else {
+        developer.log('All Filled Operations Are Correct', name: 'checkAllFilledOperationsAreCorrect');
+      }
+    }
+  }
+
   ///clears [gameTable] and [mathOperationsList]
   void restartGameData({required int columnSize, required int rowSize}) {
     gameTable.clear();
@@ -260,17 +271,6 @@ class _GamePageViewModel {
 
   ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]'s
   bool _isPossibleToAddNewOperation({required MathOperationModel newMathOperation}) {
-    /////////////////////
-    ///this check for there are too much connected operation exception
-    ///it will for a state i explained on check function
-    ///it will delete before full version
-    if (_checkThereAreTooMuchConnectedOperationException(newMathOperation: newMathOperation)) {
-      developer.log('returned false cause ThereAreTooMuchConnectedOperation! please restart game table!!',
-          name: 'isPossibleToAddNewOperationFunction');
-      return false;
-    }
-    /////////////////////
-
     //Checks if mathOperationList has newMathOperation already
     if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.boxes.first.isSameCoordination(newMathOperation.boxes.first) &&
         mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
@@ -287,6 +287,15 @@ class _GamePageViewModel {
           developer.log('returned false cause newMathOperation will pass the gameTable border', name: 'isPossibleToAddNewOperationFunction');
           return false;
         }
+        /////////////////////
+        ///this check for there are too much connected operation exception
+        ///it will for a state i explained on check function
+        ///it will delete before full version
+        if (_checkThereAreTooMuchConnectedOperationException(newMathOperation: newMathOperation)) {
+          developer.log('returned false cause ThereAreTooMuchConnectedOperation! exception', name: 'isPossibleToAddNewOperationFunction');
+          return false;
+        }
+        /////////////////////
 
         for (var index = 0; index < 5; index++) {
           if ((!gameTable[columnIndex + index][rowIndex].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
@@ -305,6 +314,15 @@ class _GamePageViewModel {
           developer.log('returned false cause newMathOperation will pass the gameTable border', name: 'isPossibleToAddNewOperationFunction');
           return false;
         }
+        /////////////////////
+        ///this check for there are too much connected operation exception
+        ///it will for a state i explained on check function
+        ///it will delete before full version
+        if (_checkThereAreTooMuchConnectedOperationException(newMathOperation: newMathOperation)) {
+          developer.log('returned false cause ThereAreTooMuchConnectedOperation! exception', name: 'isPossibleToAddNewOperationFunction');
+          return false;
+        }
+        /////////////////////
 
         for (var index = 0; index < 5; index++) {
           if ((!gameTable[columnIndex][rowIndex + index].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
@@ -324,5 +342,9 @@ class _GamePageViewModel {
   ///
   ///This exception will deleted before full version
   bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) =>
-      newMathOperation.boxes[0].hasValue && newMathOperation.boxes[2].hasValue && newMathOperation.boxes[4].hasValue;
+      _findBoxAtCoordinate(newMathOperation.boxes[0].coordination).boxType == BoxType.number &&
+      _findBoxAtCoordinate(newMathOperation.boxes[2].coordination).boxType == BoxType.number &&
+      _findBoxAtCoordinate(newMathOperation.boxes[4].coordination).boxType == BoxType.number;
+
+  BoxModel _findBoxAtCoordinate(BoxCoordination boxCoordination) => gameTable[boxCoordination.indexOfColumn][boxCoordination.indexOfRow];
 }
