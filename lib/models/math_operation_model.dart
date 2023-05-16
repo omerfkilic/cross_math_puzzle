@@ -49,7 +49,23 @@ class MathOperationModel {
     }
   }
 
-  String get getInfo => '(${boxes.first.coordination.indexOfColumn}, ${boxes.first.coordination.indexOfColumn} , ${operationDirection.name})';
+  ///if this.areBoxesFilled == false returns false
+  ///
+  ///check is result of the transaction correct
+  bool get isOperationCorrect {
+    if (!areBoxesFilled) {
+      return false;
+    }
+    switch (ArithmeticOperatorTypes.fromString(boxes[1].value!)) {
+      case ArithmeticOperatorTypes.addition:
+        return (int.tryParse(boxes[0].value!)! + int.tryParse(boxes[2].value!)!) == int.tryParse(boxes[4].value!);
+
+      case ArithmeticOperatorTypes.subtraction:
+        return (int.tryParse(boxes[0].value!)! - int.tryParse(boxes[2].value!)!) == int.tryParse(boxes[4].value!);
+    }
+  }
+
+  String get getInfo => '(${boxes.first.coordination.indexOfColumn}, ${boxes.first.coordination.indexOfRow} , ${operationDirection.name})';
 
   void deleteOperationValues() {
     for (BoxModel box in boxes) {

@@ -7,7 +7,7 @@ class BoxModel {
   BoxType boxType;
   final Size size;
   final BoxCoordination coordination;
-  List<MathOperationModel> connectedMathOperations = <MathOperationModel>[];
+  Set<MathOperationModel> connectedMathOperations = <MathOperationModel>{};
   BoxModel({
     this.size = const Size(44, 44),
     this.value,

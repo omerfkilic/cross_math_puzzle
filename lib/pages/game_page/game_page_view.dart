@@ -41,6 +41,35 @@ class _GamePageState extends State<GamePage> {
               if (viewModel.mathOperationsList.isNotEmpty) {
                 try {
                   setState(() {
+                    viewModel.checkAllFilledOperationsAreCorrect();
+                  });
+                } on OneOfTheOperationIsNotCorrectException catch (error) {
+                  _showCErrorDialog(
+                    context: context,
+                    titleWidget: const Text('One Of The Operation Is Not Correct!'),
+                    contentWidget: Text(error.toString()),
+                  );
+                } catch (error) {
+                  _showCErrorDialog(
+                    context: context,
+                    titleWidget: const Text('An Exception Occurred!'),
+                    contentWidget: Text(error.toString()),
+                  );
+                }
+              }
+              _showCErrorDialog(
+                context: context,
+                titleWidget: const Text('There are no operation here'),
+              );
+            },
+            child: const Text('Check All Operations Correct'),
+          ),
+          const SizedBox(width: 5),
+          ElevatedButton(
+            onPressed: () {
+              if (viewModel.mathOperationsList.isNotEmpty) {
+                try {
+                  setState(() {
                     viewModel.fillBoxes();
                   });
                 } on ThereIsNotAnyAvailableMathOperationToFillException {
@@ -55,10 +84,11 @@ class _GamePageState extends State<GamePage> {
                     titleWidget: const Text('FillBoxes TimedOut'),
                     contentWidget: const Text('FillBoxes TimedOut! \n Maybe there isn\'t any correctly fillable operation'),
                   );
-                } catch (e) {
+                } catch (error) {
                   _showCErrorDialog(
                     context: context,
                     titleWidget: const Text('An Exception Occurred!'),
+                    contentWidget: Text(error.toString()),
                   );
                 }
               }
@@ -78,10 +108,11 @@ class _GamePageState extends State<GamePage> {
                   titleWidget: const Text('Add Math Operation timed out!'),
                   contentWidget: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
                 );
-              } catch (e) {
+              } catch (error) {
                 _showCErrorDialog(
                   context: context,
                   titleWidget: const Text('An Exception Occurred!'),
+                  contentWidget: Text(error.toString()),
                 );
               }
             },

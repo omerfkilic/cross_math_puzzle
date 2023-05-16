@@ -35,11 +35,9 @@ enum ArithmeticOperatorTypes {
   static ArithmeticOperatorTypes fromString(String value) {
     switch (value) {
       case '+':
-        ArithmeticOperatorTypes.addition;
-        break;
+        return ArithmeticOperatorTypes.addition;
       case '-':
-        ArithmeticOperatorTypes.subtraction;
-        break;
+        return ArithmeticOperatorTypes.subtraction;
       // case '*':
       //   ArithmeticOperatorTypes.multiplication;
       //   break;
