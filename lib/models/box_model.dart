@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 class BoxModel {
   String? value;
   BoxType boxType;
-  final Size size;
   final BoxCoordination coordination;
   Set<MathOperationModel> connectedMathOperations = <MathOperationModel>{};
   BoxModel({
-    this.size = const Size(44, 44),
     this.value,
     required this.coordination,
     this.boxType = BoxType.empty,

@@ -6,9 +6,6 @@ class _GamePageViewModel {
   static _GamePageViewModel get instant => _instant ??= _GamePageViewModel._();
   final Random _random = Random();
 
-  ///as seconds
-  final int timeoutDuration = 2;
-
   final List<List<BoxModel>> gameTable = [];
 
   ///list of mathematical operations found in the game table
@@ -101,8 +98,8 @@ class _GamePageViewModel {
         ///////////////////
         //if all values are null
         if (firstNumber == null && secondNumber == null && result == null) {
-          firstNumber ??= _random.nextInt(25);
-          secondNumber ??= _random.nextInt(25);
+          firstNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
+          secondNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
           result = _solveOperation(first: firstNumber, second: secondNumber, arithmeticOperator: arithmeticOperator);
 
           //////////////////////
@@ -137,8 +134,8 @@ class _GamePageViewModel {
           // 0  1  0
           // 1  0  0
           if (result == null) {
-            firstNumber ??= _random.nextInt(25);
-            secondNumber ??= _random.nextInt(25);
+            firstNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
+            secondNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
             result = _solveOperation(first: firstNumber, second: secondNumber, arithmeticOperator: arithmeticOperator);
             // x  y res
             // 0  0  1
@@ -163,7 +160,7 @@ class _GamePageViewModel {
 
           break;
         }
-        if (startDateTime.isBefore(DateTime.now().add(const Duration(seconds: -5)))) {
+        if (startDateTime.isBefore(DateTime.now().add(Duration(seconds: -CConsts.fillBoxesTimeOutDuration)))) {
           developer.log('TimedOut!', name: 'fillBoxes');
           throw FillBoxesTimedOutException('FillBoxes TimedOut!');
         }
@@ -190,22 +187,22 @@ class _GamePageViewModel {
     final DateTime startDateTime = DateTime.now();
     //this while will loop until it creates newMathOperation or timed out!
     while (true) {
-      int? columnIndex;
-      int? rowIndex;
+      int? indexOfColumn;
+      int? indexOfRow;
       //if mathOperationsList is empty first mathOperation will start from (0, 0)
       try {
         if (mathOperationsList.isEmpty) {
-          columnIndex = 0;
-          rowIndex = 0;
+          indexOfColumn = CConsts.firstOperationStartCoordination.indexOfColumn;
+          indexOfRow = CConsts.firstOperationStartCoordination.indexOfRow;
         } else {
           final BoxModel boxModel = mathOperationsList.randomElement!.findBoxForCreateANewOperation();
-          columnIndex = boxModel.coordination.indexOfColumn;
-          rowIndex = boxModel.coordination.indexOfRow;
+          indexOfColumn = boxModel.coordination.indexOfColumn;
+          indexOfRow = boxModel.coordination.indexOfRow;
         }
 
         final MathOperationModel newMathOperation = MathOperationModel(
-          indexOfColumn: columnIndex,
-          indexOfRow: rowIndex,
+          indexOfColumn: indexOfColumn,
+          indexOfRow: indexOfRow,
           operationDirection: Axis.values.randomElement!,
         );
         developer.log('created newMathOperation ${newMathOperation.getInfo}', name: 'addOperation');
@@ -218,10 +215,10 @@ class _GamePageViewModel {
             final BoxModel gameTablesBox;
             switch (newMathOperation.operationDirection) {
               case Axis.vertical:
-                gameTablesBox = gameTable[columnIndex + index][rowIndex];
+                gameTablesBox = gameTable[indexOfColumn + index][indexOfRow];
                 break;
               case Axis.horizontal:
-                gameTablesBox = gameTable[columnIndex][rowIndex + index];
+                gameTablesBox = gameTable[indexOfColumn][indexOfRow + index];
                 break;
             }
             if (gameTablesBox.boxType == BoxType.empty) {
@@ -243,7 +240,7 @@ class _GamePageViewModel {
         rethrow;
       }
       //true means function timed out
-      if (startDateTime.isBefore(DateTime.now().add(Duration(seconds: -timeoutDuration)))) {
+      if (startDateTime.isBefore(DateTime.now().add(Duration(seconds: -CConsts.addOperationTimeOutDuration)))) {
         developer.log('addOperation function timed out!!', name: 'addOperation');
 
         throw AddOperationTimedOutException('Add Operation Timed Out');
@@ -278,12 +275,12 @@ class _GamePageViewModel {
       return false;
     }
 
-    final int columnIndex = newMathOperation.boxes.first.coordination.indexOfColumn;
-    final int rowIndex = newMathOperation.boxes.first.coordination.indexOfRow;
+    final int indexOfColumn = newMathOperation.boxes.first.coordination.indexOfColumn;
+    final int indexOfRow = newMathOperation.boxes.first.coordination.indexOfRow;
 
     switch (newMathOperation.operationDirection) {
       case Axis.vertical:
-        if (columnIndex >= GamePage.columnSize - 4) {
+        if (indexOfColumn >= CConsts.gameTableColumnIndexSize - 4) {
           developer.log('returned false cause newMathOperation will pass the gameTable border', name: 'isPossibleToAddNewOperationFunction');
           return false;
         }
@@ -298,9 +295,9 @@ class _GamePageViewModel {
         /////////////////////
 
         for (var index = 0; index < 5; index++) {
-          if ((!gameTable[columnIndex + index][rowIndex].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
-              gameTable[columnIndex + index][rowIndex].isNotEmpty) {
-            developer.log('returned false cause newMathOperation\'s box(${columnIndex + index}, $rowIndex) wont matched gameTables box',
+          if ((!gameTable[indexOfColumn + index][indexOfRow].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
+              gameTable[indexOfColumn + index][indexOfRow].isNotEmpty) {
+            developer.log('returned false cause newMathOperation\'s box(${indexOfColumn + index}, $indexOfRow) wont matched gameTables box',
                 name: 'isPossibleToAddNewOperationFunction');
             return false;
           }
@@ -310,7 +307,7 @@ class _GamePageViewModel {
         return true;
 
       case Axis.horizontal:
-        if (rowIndex >= GamePage.rowSize - 4) {
+        if (indexOfRow >= CConsts.gameTableRowIndexSize - 4) {
           developer.log('returned false cause newMathOperation will pass the gameTable border', name: 'isPossibleToAddNewOperationFunction');
           return false;
         }
@@ -325,9 +322,9 @@ class _GamePageViewModel {
         /////////////////////
 
         for (var index = 0; index < 5; index++) {
-          if ((!gameTable[columnIndex][rowIndex + index].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
-              gameTable[columnIndex][rowIndex + index].isNotEmpty) {
-            developer.log('returned false cause newMathOperation\'s box($columnIndex , ${rowIndex + index}) wont matched gameTables box',
+          if ((!gameTable[indexOfColumn][indexOfRow + index].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
+              gameTable[indexOfColumn][indexOfRow + index].isNotEmpty) {
+            developer.log('returned false cause newMathOperation\'s box($indexOfColumn , ${indexOfRow + index}) wont matched gameTables box',
                 name: 'isPossibleToAddNewOperationFunction');
             return false;
           }

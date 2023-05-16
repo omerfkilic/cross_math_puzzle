@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/helper/custom_extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +15,6 @@ part 'game_page_view_model.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
-  static const int columnSize = 15;
-  static const int rowSize = 15;
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -26,7 +25,7 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     viewModel = _GamePageViewModel.instant;
-    viewModel.prepareGameTable(columnSize: GamePage.columnSize, rowSize: GamePage.rowSize);
+    viewModel.prepareGameTable(columnSize: CConsts.gameTableColumnIndexSize, rowSize: CConsts.gameTableRowIndexSize);
     if (mounted) super.initState();
   }
 
@@ -121,7 +120,7 @@ class _GamePageState extends State<GamePage> {
           const SizedBox(width: 5),
           ElevatedButton(
             onPressed: () => setState(() {
-              viewModel.restartGameData(columnSize: GamePage.columnSize, rowSize: GamePage.rowSize);
+              viewModel.restartGameData(columnSize: CConsts.gameTableColumnIndexSize, rowSize: CConsts.gameTableRowIndexSize);
             }),
             child: const Text('Restart Game Table'),
           ),
@@ -146,8 +145,8 @@ class _GamePageState extends State<GamePage> {
                       children: List.generate(
                         viewModel.gameTable[indexOfColumn].length,
                         (indexOfRow) => Container(
-                          width: viewModel.gameTable[indexOfColumn][indexOfRow].size.width,
-                          height: viewModel.gameTable[indexOfColumn][indexOfRow].size.height,
+                          width: CConsts.gameTableBoxSize.width,
+                          height: CConsts.gameTableBoxSize.height,
                           padding: const EdgeInsets.symmetric(horizontal: 2),
                           margin: const EdgeInsets.all(2),
                           color: (viewModel.gameTable[indexOfColumn][indexOfRow].isNotEmpty)
