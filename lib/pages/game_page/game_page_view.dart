@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:cross_math_puzzle/helper/custom_extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cross_math_puzzle/helper/custom_exceptions.dart';

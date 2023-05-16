@@ -32,7 +32,7 @@ class _GamePageViewModel {
   void fillBoxes() {
     MathOperationModel? fillableMathOperation;
     final List<MathOperationModel> filledMathOperationList = [];
-    //TODO try catch ekle
+
     for (var mathOperation in mathOperationsList) {
       if (mathOperation.areBoxesFilled) {
         filledMathOperationList.add(mathOperation);
@@ -71,6 +71,7 @@ class _GamePageViewModel {
             break;
           }
         }
+
         //for result
         for (var mathOperation in filledMathOperationList) {
           final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
@@ -80,6 +81,7 @@ class _GamePageViewModel {
             break;
           }
         }
+
         ArithmeticOperatorTypes? arithmeticOperator;
         // for arithmeticOperator
         // this for maybe will delete or not :) i wont decide yet
@@ -92,7 +94,7 @@ class _GamePageViewModel {
         //   }
         // }
 
-        arithmeticOperator ??= ArithmeticOperatorTypes.values[_random.nextInt(ArithmeticOperatorTypes.values.length)];
+        arithmeticOperator ??= ArithmeticOperatorTypes.values.randomElement!;
         developer.log('Filled all boxes which has another box has value at the same coordinate', name: 'fillBoxes');
 
         //// This logic only for addition and subtraction, Other will add when i ready to write :)
@@ -195,7 +197,7 @@ class _GamePageViewModel {
           columnIndex = 0;
           rowIndex = 0;
         } else {
-          final BoxModel boxModel = mathOperationsList[_random.nextInt(mathOperationsList.length)].findBoxForCreateANewOperation();
+          final BoxModel boxModel = mathOperationsList.randomElement!.findBoxForCreateANewOperation();
           columnIndex = boxModel.coordination.indexOfColumn;
           rowIndex = boxModel.coordination.indexOfRow;
         }
@@ -203,7 +205,7 @@ class _GamePageViewModel {
         final MathOperationModel newMathOperation = MathOperationModel(
           indexOfColumn: columnIndex,
           indexOfRow: rowIndex,
-          operationDirection: Axis.values[_random.nextInt(2)],
+          operationDirection: Axis.values.randomElement!,
         );
         developer.log('created newMathOperation ${newMathOperation.getInfo}', name: 'addOperation');
 
