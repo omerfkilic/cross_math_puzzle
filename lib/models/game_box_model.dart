@@ -1,20 +1,23 @@
 import 'package:cross_math_puzzle/helper/enums.dart';
+import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
 import 'package:cross_math_puzzle/models/math_operation_model.dart';
 
-class BoxModel {
+class GameBox {
   String? value;
   BoxType boxType;
-  final BoxCoordination coordination;
+  final GameBoxCoordination coordination;
 
-  ///means botType is BoxType.number and box has value but hidden for game
+  ///means botType is BoxType.number and gameBox has value but hidden for game
   bool isHidden = false;
   Set<MathOperationModel> connectedMathOperations = <MathOperationModel>{};
-  BoxModel({
+  GameBox({
     this.value,
     required this.coordination,
     this.boxType = BoxType.empty,
   });
+}
 
+extension GameBoxModelExtension on GameBox {
   ///boxType == BoxType.empty
   bool get isEmpty => boxType == BoxType.empty;
 
@@ -31,26 +34,10 @@ class BoxModel {
     return null;
   }
 
-  bool isSameCoordination(BoxModel boxModel) => coordination._isSameCoordination(boxModel.coordination);
+  bool isSameCoordination(GameBox boxModel) => coordination.isSameCoordination(boxModel.coordination);
 
   void deleteBoxValue() {
     value = null;
     boxType = BoxType.empty;
   }
-}
-
-class BoxCoordination {
-  ///coordinate of x
-  final int indexOfColumn;
-
-  ///coordinate of y
-  final int indexOfRow;
-  BoxCoordination({
-    required this.indexOfColumn,
-    required this.indexOfRow,
-  });
-
-  ///returns boxCoordination.indexOfColumn == this.indexOfColumn && boxCoordination.indexOfRow == this.indexOfRow
-  bool _isSameCoordination(BoxCoordination boxCoordination) =>
-      boxCoordination.indexOfColumn == indexOfColumn && boxCoordination.indexOfRow == indexOfRow;
 }

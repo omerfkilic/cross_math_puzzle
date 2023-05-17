@@ -2,13 +2,16 @@ import 'dart:developer' as developer;
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:cross_math_puzzle/components/exceptions/timed_out_exceptions.dart';
+import 'package:cross_math_puzzle/components/functions.dart';
 import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/helper/custom_extensions.dart';
+import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cross_math_puzzle/helper/custom_exceptions.dart';
+import 'package:cross_math_puzzle/components/exceptions/custom_exceptions.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
-import 'package:cross_math_puzzle/models/box_model.dart';
+import 'package:cross_math_puzzle/models/game_box_model.dart';
 import 'package:cross_math_puzzle/models/math_operation_model.dart';
 
 class GamePageViewModel {
@@ -17,7 +20,7 @@ class GamePageViewModel {
   static GamePageViewModel get instant => _instant ??= GamePageViewModel._();
   final Random _random = Random();
 
-  final List<List<BoxModel>> gameTable = [];
+  final List<List<GameBox>> gameTable = [];
 
   ///list of mathematical operations found in the game table
   final List<MathOperationModel> mathOperationsList = [];
@@ -28,10 +31,10 @@ class GamePageViewModel {
   void prepareGameTable({required int columnSize, required int rowSize}) {
     for (int indexOfColumn = 0; indexOfColumn < columnSize; indexOfColumn++) {
       gameTable.add(
-        List<BoxModel>.generate(
+        List<GameBox>.generate(
           rowSize,
-          (indexOfRow) => BoxModel(
-            coordination: BoxCoordination(indexOfColumn: indexOfColumn, indexOfRow: indexOfRow),
+          (indexOfRow) => GameBox(
+            coordination: GameBoxCoordination(indexOfColumn: indexOfColumn, indexOfRow: indexOfRow),
           ),
         ),
       );
@@ -40,11 +43,11 @@ class GamePageViewModel {
   }
 
   int _findNumberBoxesCount() {
-    Set<BoxModel> numberBoxes = {};
+    Set<GameBox> numberBoxes = {};
     for (var mathOperation in mathOperationsList) {
-      for (var box in mathOperation.boxes) {
-        if (box.boxType == BoxType.number) {
-          numberBoxes.add(box);
+      for (var gameBox in mathOperation.gameBoxes) {
+        if (gameBox.boxType == BoxType.number) {
+          numberBoxes.add(gameBox);
         }
       }
     }
@@ -57,8 +60,8 @@ class GamePageViewModel {
     final DateTime startDateTime = DateTime.now();
     while (hiddenNumbers.length <= hideCount) {
       MathOperationModel selectedMathOperation = mathOperationsList.randomElement!;
-      BoxModel selectedBox = selectedMathOperation.numberBoxes.randomElement!;
-      if (!selectedBox.isHidden && !selectedMathOperation.isAllNumberBoxesHidden([selectedBox])) {
+      GameBox selectedBox = selectedMathOperation.numberBoxes.randomElement!;
+      if (!selectedBox.isHidden && !selectedMathOperation.isAllNumberBoxesHidden(exceptedList: [selectedBox])) {
         selectedBox.isHidden = true;
         hiddenNumbers.add(selectedBox.valueAsInt!);
       }
@@ -67,7 +70,7 @@ class GamePageViewModel {
         throw HideNumbersTimedOutException('HideNumbers TimedOut!');
       }
     }
-    // After we hide all boxes, we have to check it is possible to solve this puzzle.
+    // After we hide all game boxes, we have to check it is possible to solve this puzzle.
     //But i think we don't need this for now.
     //i'll check this after.
     //TODO puzzle'ın çözülebilir olduğunu anlama için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
@@ -75,22 +78,22 @@ class GamePageViewModel {
 
   void unHideNumbers() {
     for (var mathOperation in mathOperationsList) {
-      for (var box in mathOperation.boxes) {
-        box.isHidden = false;
+      for (var gameBox in mathOperation.gameBoxes) {
+        gameBox.isHidden = false;
       }
     }
   }
 
-  void fillBoxes() {
+  void fillGameBoxes() {
     MathOperationModel? fillableMathOperation;
     final List<MathOperationModel> filledMathOperationList = [];
 
     for (var mathOperation in mathOperationsList) {
-      if (mathOperation.areBoxesFilled) {
+      if (mathOperation.areGameBoxesFilled) {
         filledMathOperationList.add(mathOperation);
       } else {
         fillableMathOperation ??= mathOperation;
-        developer.log('Found one fillable MathOperation', name: 'fillBoxes');
+        developer.log('Found one fillable MathOperation', name: 'fillGameBoxes');
       }
     }
 
@@ -106,8 +109,8 @@ class GamePageViewModel {
 
         //for firstNumber
         for (var mathOperation in filledMathOperationList) {
-          BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
-              (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[0]) && mathOperation.boxes[0].hasValue);
+          GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
+              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[0]) && mathOperation.gameBoxes[0].hasValue);
           if (filledBox != null) {
             firstNumber = int.tryParse(filledBox.value!);
             break;
@@ -116,8 +119,8 @@ class GamePageViewModel {
 
         //for secondNumber
         for (var mathOperation in filledMathOperationList) {
-          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
-              (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[2]) && mathOperation.boxes[2].hasValue);
+          final GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
+              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[2]) && mathOperation.gameBoxes[2].hasValue);
           if (filledBox != null) {
             secondNumber = int.tryParse(filledBox.value!);
             break;
@@ -126,8 +129,8 @@ class GamePageViewModel {
 
         //for result
         for (var mathOperation in filledMathOperationList) {
-          final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
-              (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[4]) && mathOperation.boxes[4].hasValue);
+          final GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
+              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[4]) && mathOperation.gameBoxes[4].hasValue);
           if (filledBox != null) {
             result = int.tryParse(filledBox.value!);
             break;
@@ -138,8 +141,8 @@ class GamePageViewModel {
         // for arithmeticOperator
         // this for maybe will delete or not :) i wont decide yet
         // for (var mathOperation in filledMathOperationList) {
-        //   final BoxModel? filledBox = mathOperation.boxes.firstWhereOrNull(
-        //       (BoxModel boxModel) => boxModel.isSameCoordination(fillableMathOperation!.boxes[3]) && mathOperation.boxes[3].hasValue);
+        //   final GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
+        //       (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[3]) && mathOperation.gameBoxes[3].hasValue);
         //   if (filledBox != null) {
         //     firstNumber = int.tryParse(filledBox.value!);
         //     break;
@@ -147,13 +150,13 @@ class GamePageViewModel {
         // }
 
         arithmeticOperator ??= ArithmeticOperatorTypes.values.randomElement!;
-        developer.log('Filled all boxes which has another box has value at the same coordinate', name: 'fillBoxes');
+        developer.log('Filled all gameBoxes which has another gameBoxes has value at the same coordinate', name: 'fillGameBoxes');
 
         //TODO Burayı method olarak dışarı çıkartmamız lazım
         //içine firstNumber, secondNumber, result'ı alır
         //HiddenNumbers'ı da alır içine
         //eğer hiddenNumber null değilse doldurması gereken number'ları bu listeden seçer yoksa random atar
-        //Bu şekilde hem fillBoxes'da hem de hideNumbers'da kullanabiliriz bunu
+        //Bu şekilde hem fillGameBoxes'da hem de hideNumbers'da kullanabiliriz bunu
         //Yada MathHelper diye bir class kurup tüm matematiksel işlemleri o class'ın içinde yapabiliriz
 
         //// This logic only for addition and subtraction, Other will add when i ready to write :)
@@ -219,20 +222,20 @@ class GamePageViewModel {
             firstNumber! >= 0 &&
             secondNumber! >= 0 &&
             isOperationCorrect(firstNumber: firstNumber, secondNumber: secondNumber, result: result, arithmeticOperator: arithmeticOperator)) {
-          fillableMathOperation.boxes[0].value = firstNumber.toString();
-          fillableMathOperation.boxes[1].value = arithmeticOperator.toString();
-          fillableMathOperation.boxes[2].value = secondNumber.toString();
-          fillableMathOperation.boxes[3].value = '=';
-          fillableMathOperation.boxes[4].value = result.toString();
-          developer.log('Filled all missing values and added gameTable', name: 'fillBoxes');
+          fillableMathOperation.gameBoxes[0].value = firstNumber.toString();
+          fillableMathOperation.gameBoxes[1].value = arithmeticOperator.toString();
+          fillableMathOperation.gameBoxes[2].value = secondNumber.toString();
+          fillableMathOperation.gameBoxes[3].value = '=';
+          fillableMathOperation.gameBoxes[4].value = result.toString();
+          developer.log('Filled all missing values and added gameTable', name: 'fillGameBoxes');
 
           break;
         }
-        if (startDateTime.isBefore(DateTime.now().add(CConsts.fillBoxesTimeOutDuration))) {
-          developer.log('TimedOut!', name: 'fillBoxes');
-          throw FillBoxesTimedOutException('FillBoxes TimedOut!');
+        if (startDateTime.isBefore(DateTime.now().add(CConsts.fillGameBoxesTimeOutDuration))) {
+          developer.log('TimedOut!', name: 'fillGameBoxes');
+          throw FillGameBoxesTimedOutException('FillGameBoxes TimedOut!');
         }
-        developer.log('New filled operation didn\'t fit gameTable', name: 'fillBoxes');
+        developer.log('New filled operation didn\'t fit gameTable', name: 'fillGameBoxes');
       }
     }
   }
@@ -263,9 +266,9 @@ class GamePageViewModel {
           indexOfColumn = CConsts.firstOperationStartCoordination.indexOfColumn;
           indexOfRow = CConsts.firstOperationStartCoordination.indexOfRow;
         } else {
-          final BoxModel boxModel = mathOperationsList.randomElement!.numberBoxes.randomElement!;
-          indexOfColumn = boxModel.coordination.indexOfColumn;
-          indexOfRow = boxModel.coordination.indexOfRow;
+          final GameBox gameBox = mathOperationsList.randomElement!.numberBoxes.randomElement!;
+          indexOfColumn = gameBox.coordination.indexOfColumn;
+          indexOfRow = gameBox.coordination.indexOfRow;
         }
 
         final MathOperationModel newMathOperation = MathOperationModel(
@@ -280,7 +283,7 @@ class GamePageViewModel {
         {
           developer.log('newMathOperation passed isPossibleToAddNewOperation! It will add to gameTable', name: 'addOperation');
           for (var index = 0; index < 5; index++) {
-            final BoxModel gameTablesBox;
+            final GameBox gameTablesBox;
             switch (newMathOperation.operationDirection) {
               case Axis.vertical:
                 gameTablesBox = gameTable[indexOfColumn + index][indexOfRow];
@@ -290,9 +293,9 @@ class GamePageViewModel {
                 break;
             }
             if (gameTablesBox.boxType == BoxType.empty) {
-              gameTablesBox.boxType = newMathOperation.boxes[index].boxType;
+              gameTablesBox.boxType = newMathOperation.gameBoxes[index].boxType;
             }
-            newMathOperation.boxes[index] = gameTablesBox;
+            newMathOperation.gameBoxes[index] = gameTablesBox;
             gameTablesBox.connectedMathOperations.add(newMathOperation);
           }
           mathOperationsList.add(newMathOperation);
@@ -337,14 +340,14 @@ class GamePageViewModel {
   ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]'s
   bool _isPossibleToAddNewOperation({required MathOperationModel newMathOperation}) {
     //Checks if mathOperationList has newMathOperation already
-    if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.boxes.first.isSameCoordination(newMathOperation.boxes.first) &&
+    if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.gameBoxes.first.isSameCoordination(newMathOperation.gameBoxes.first) &&
         mathOperationModel.operationDirection == newMathOperation.operationDirection))) {
       developer.log('returned false cause mathOperationList already has newMathOperation', name: 'isPossibleToAddNewOperationFunction');
       return false;
     }
 
-    final int indexOfColumn = newMathOperation.boxes.first.coordination.indexOfColumn;
-    final int indexOfRow = newMathOperation.boxes.first.coordination.indexOfRow;
+    final int indexOfColumn = newMathOperation.gameBoxes.first.coordination.indexOfColumn;
+    final int indexOfRow = newMathOperation.gameBoxes.first.coordination.indexOfRow;
 
     switch (newMathOperation.operationDirection) {
       case Axis.vertical:
@@ -363,7 +366,7 @@ class GamePageViewModel {
         /////////////////////
 
         for (var index = 0; index < 5; index++) {
-          if ((!gameTable[indexOfColumn + index][indexOfRow].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
+          if ((!gameTable[indexOfColumn + index][indexOfRow].boxType.isEqual(newMathOperation.gameBoxes[index].boxType)) &&
               gameTable[indexOfColumn + index][indexOfRow].isNotEmpty) {
             developer.log('returned false cause newMathOperation\'s box(${indexOfColumn + index}, $indexOfRow) wont matched gameTables box',
                 name: 'isPossibleToAddNewOperationFunction');
@@ -390,7 +393,7 @@ class GamePageViewModel {
         /////////////////////
 
         for (var index = 0; index < 5; index++) {
-          if ((!gameTable[indexOfColumn][indexOfRow + index].boxType.isEqual(newMathOperation.boxes[index].boxType)) &&
+          if ((!gameTable[indexOfColumn][indexOfRow + index].boxType.isEqual(newMathOperation.gameBoxes[index].boxType)) &&
               gameTable[indexOfColumn][indexOfRow + index].isNotEmpty) {
             developer.log('returned false cause newMathOperation\'s box($indexOfColumn , ${indexOfRow + index}) wont matched gameTables box',
                 name: 'isPossibleToAddNewOperationFunction');
@@ -408,5 +411,5 @@ class GamePageViewModel {
   ///This exception will deleted before full version
   bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) =>
       newMathOperation.numberBoxes.every((numberBox) => _findBoxAtCoordinate(numberBox.coordination).boxType == BoxType.number);
-  BoxModel _findBoxAtCoordinate(BoxCoordination boxCoordination) => gameTable[boxCoordination.indexOfColumn][boxCoordination.indexOfRow];
+  GameBox _findBoxAtCoordinate(GameBoxCoordination boxCoordination) => gameTable[boxCoordination.indexOfColumn][boxCoordination.indexOfRow];
 }

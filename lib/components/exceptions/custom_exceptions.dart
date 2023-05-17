@@ -1,0 +1,17 @@
+class OneOfTheOperationIsNotCorrectException implements Exception {
+  final String message;
+  OneOfTheOperationIsNotCorrectException(this.message);
+  @override
+  String toString() {
+    return "Exception: $message";
+  }
+}
+
+class ThereIsNotAnyAvailableMathOperationToFillException implements Exception {
+  final String message;
+  ThereIsNotAnyAvailableMathOperationToFillException(this.message);
+  @override
+  String toString() {
+    return "Exception: $message";
+  }
+}

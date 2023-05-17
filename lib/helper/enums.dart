@@ -45,45 +45,13 @@ enum ArithmeticOperatorTypes {
       //   ArithmeticOperatorTypes.division;
       //   break;
     }
+    //TODO custom exception yaz
     throw Exception();
   }
-}
-
-extension ArithmeticOperatorTypesExtension on ArithmeticOperatorTypes {
-  ArithmeticOperatorTypes get reverse {
-    switch (this) {
-      case ArithmeticOperatorTypes.addition:
-        return ArithmeticOperatorTypes.subtraction;
-      case ArithmeticOperatorTypes.subtraction:
-        return ArithmeticOperatorTypes.addition;
-    }
-  }
-}
-
-extension BoxTypeExtension on BoxType {
-  bool isEqual(BoxType boxType) => boxType == this;
 }
 
 enum GameDifficult {
   easy,
   medium,
   hard,
-}
-
-extension GameDifficultExtension on GameDifficult {
-  ///easy 0.4
-  ///
-  ///medium 0.65
-  ///
-  ///hard 0.825
-  double get hiddenCountDivider {
-    switch (this) {
-      case GameDifficult.easy:
-        return 0.4;
-      case GameDifficult.medium:
-        return 0.65;
-      case GameDifficult.hard:
-        return 0.825;
-    }
-  }
 }

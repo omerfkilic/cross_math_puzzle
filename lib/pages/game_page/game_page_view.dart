@@ -1,8 +1,10 @@
+import 'package:cross_math_puzzle/components/exceptions/timed_out_exceptions.dart';
 import 'package:cross_math_puzzle/helper/consts.dart';
+import 'package:cross_math_puzzle/models/game_box_model.dart';
 import 'package:cross_math_puzzle/pages/game_page/game_page_view_model.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cross_math_puzzle/helper/custom_exceptions.dart';
+import 'package:cross_math_puzzle/components/exceptions/custom_exceptions.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
 
 class GamePage extends StatefulWidget {
@@ -25,7 +27,7 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Material App Bar'),
+        title: const Text('Cross Math Puzzle Generator'),
         actions: [
           ElevatedButton(
             onPressed: () {
@@ -42,10 +44,10 @@ class _GamePageState extends State<GamePage> {
                 setState(() {
                   viewModel.hideNumbers();
                 });
-              } on HideNumbersTimedOutException {
+              } on HideNumbersTimedOutException catch (error) {
                 _showCErrorDialog(
                   context: context,
-                  titleWidget: const Text('Hide Number TimedOut!'),
+                  titleWidget: Text(error.toString()),
                 );
               } catch (error) {
                 _showCErrorDialog(
@@ -93,7 +95,7 @@ class _GamePageState extends State<GamePage> {
               if (viewModel.mathOperationsList.isNotEmpty) {
                 try {
                   setState(() {
-                    viewModel.fillBoxes();
+                    viewModel.fillGameBoxes();
                   });
                 } on ThereIsNotAnyAvailableMathOperationToFillException {
                   _showCErrorDialog(
@@ -101,11 +103,11 @@ class _GamePageState extends State<GamePage> {
                     titleWidget: const Text('There Is Not Any Available Math Operation To Fill!'),
                     contentWidget: const Text('Can\'t find any operation addable numbers!\nPlease add free operation first!'),
                   );
-                } on FillBoxesTimedOutException {
+                } on FillGameBoxesTimedOutException catch (error) {
                   _showCErrorDialog(
                     context: context,
-                    titleWidget: const Text('FillBoxes TimedOut'),
-                    contentWidget: const Text('FillBoxes TimedOut! \nMaybe there isn\'t any correctly fillable operation'),
+                    titleWidget: Text(error.toString()),
+                    contentWidget: const Text('Maybe there isn\'t any correctly fillable operation'),
                   );
                 } catch (error) {
                   _showCErrorDialog(
@@ -116,7 +118,7 @@ class _GamePageState extends State<GamePage> {
                 }
               }
             },
-            child: const Text('Fill Boxes'),
+            child: const Text('Fill Game Boxes'),
           ),
           const SizedBox(width: 5),
           ElevatedButton(
@@ -125,11 +127,11 @@ class _GamePageState extends State<GamePage> {
                 setState(() {
                   viewModel.addOperation();
                 });
-              } on AddOperationTimedOutException {
+              } on AddOperationTimedOutException catch (error) {
                 _showCErrorDialog(
                   context: context,
-                  titleWidget: const Text('Add Math Operation timed out!'),
-                  contentWidget: const Text('Add Math Operation timed out! \nPlease check is possible to add new math operation to game table!'),
+                  titleWidget: Text(error.toString()),
+                  contentWidget: const Text('Please check is possible to add new math operation to game table!'),
                 );
               } catch (error) {
                 _showCErrorDialog(
@@ -184,12 +186,12 @@ class _GamePageState extends State<GamePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              //coordinate of box
+                              //coordinate of gameBox
                               Text(
                                 '$indexOfColumn : $indexOfRow',
                                 style: const TextStyle(fontSize: 12),
                               ),
-                              //box's value or boxType
+                              //gameBox's value or boxType
                               Text(
                                 viewModel.gameTable[indexOfColumn][indexOfRow].isHidden
                                     ? 'hidden'

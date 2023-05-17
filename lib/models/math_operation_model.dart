@@ -1,16 +1,21 @@
+import 'package:cross_math_puzzle/components/functions.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
-import 'package:cross_math_puzzle/models/box_model.dart';
+import 'package:cross_math_puzzle/models/game_box_model.dart';
+import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
 import 'package:flutter/material.dart';
 
+//TODO önce modellerin içindeki methodları extension yap daha sonra gamePageView'i
+//TODO variable'ların ve methodların açıklamalarına ` ekle
+//AlT GR + ,
 class MathOperationModel {
-  final List<BoxModel> boxes = [];
+  final List<GameBox> gameBoxes = [];
   final Axis operationDirection;
 
-  ///returns if all boxes filled
-  bool get areBoxesFilled => boxes.every((element) => element.hasValue);
-  List<BoxModel> get numberBoxes => [boxes[0], boxes[2], boxes[4]];
+  ///returns if all gameBoxes filled
+  bool get areGameBoxesFilled => gameBoxes.every((element) => element.hasValue);
+  List<GameBox> get numberBoxes => [gameBoxes[0], gameBoxes[2], gameBoxes[4]];
 
-  BoxModel get operatorBox => boxes[1];
+  GameBox get operatorBox => gameBoxes[1];
 
   MathOperationModel({
     required int indexOfColumn,
@@ -20,74 +25,62 @@ class MathOperationModel {
     switch (operationDirection) {
       case Axis.vertical:
         for (var index = 0; index < 5; index++) {
-          boxes.add(BoxModel(
-            coordination: BoxCoordination(indexOfColumn: indexOfColumn + index, indexOfRow: indexOfRow),
+          gameBoxes.add(GameBox(
+            coordination: GameBoxCoordination(indexOfColumn: indexOfColumn + index, indexOfRow: indexOfRow),
             boxType: _findBoxType(index),
           ));
         }
         break;
       case Axis.horizontal:
         for (var index = 0; index < 5; index++) {
-          boxes.add(BoxModel(
-            coordination: BoxCoordination(indexOfColumn: indexOfColumn, indexOfRow: indexOfRow + index),
+          gameBoxes.add(GameBox(
+            coordination: GameBoxCoordination(indexOfColumn: indexOfColumn, indexOfRow: indexOfRow + index),
             boxType: _findBoxType(index),
           ));
         }
         break;
     }
   }
+}
 
-  ///if all numberBoxes are hidden except exceptedList has
-  bool isAllNumberBoxesHidden([List<BoxModel> exceptedList = const []]) => numberBoxes.every(
-        (numberBox) => (exceptedList.any((box) => box == numberBox) || numberBox.isHidden),
+extension MathOperationModelExtension on MathOperationModel {
+  ///if all numberBoxes are hidden except [exceptedList] has
+  bool isAllNumberBoxesHidden({List<GameBox> exceptedList = const []}) => numberBoxes.every(
+        (numberBox) => (exceptedList.any((GameBox gameBox) => gameBox == numberBox) || numberBox.isHidden),
       );
 
   //TODO bu yapıyı düşün!
-  ///if this.areBoxesFilled == false returns false
+
+  ///if this.areGameBoxesFilled == false returns false
   ///
   ///checks is result of the transaction correct
   bool get isOperationResultCorrect {
-    if (!areBoxesFilled) {
+    if (!areGameBoxesFilled) {
       return false;
     }
     return isOperationCorrect(
-      firstNumber: int.tryParse(boxes[0].value!)!,
-      secondNumber: int.tryParse(boxes[2].value!)!,
-      result: int.tryParse(boxes[4].value!)!,
+      firstNumber: int.tryParse(gameBoxes[0].value!)!,
+      secondNumber: int.tryParse(gameBoxes[2].value!)!,
+      result: int.tryParse(gameBoxes[4].value!)!,
       arithmeticOperator: ArithmeticOperatorTypes.fromString(operatorBox.value!),
     );
   }
 
-  String get getInfo => '(${boxes.first.coordination.indexOfColumn}, ${boxes.first.coordination.indexOfRow} , ${operationDirection.name})';
+  String get getInfo => '(${gameBoxes.first.coordination.indexOfColumn}, ${gameBoxes.first.coordination.indexOfRow} , ${operationDirection.name})';
 
   void deleteOperationValues() {
-    for (BoxModel box in boxes) {
-      box.deleteBoxValue();
+    for (GameBox gameBox in gameBoxes) {
+      gameBox.deleteBoxValue();
     }
   }
-}
 
-BoxType _findBoxType(int index) {
-  if (index == 1) {
-    return BoxType.arithmeticOperator;
-  } else if (index == 3) {
-    return BoxType.equalMark;
-  } else {
-    return BoxType.number;
-  }
-}
-
-bool isOperationCorrect({
-  required int firstNumber,
-  required int secondNumber,
-  required int result,
-  required ArithmeticOperatorTypes arithmeticOperator,
-}) {
-  switch (arithmeticOperator) {
-    case ArithmeticOperatorTypes.addition:
-      return (firstNumber + secondNumber == result);
-
-    case ArithmeticOperatorTypes.subtraction:
-      return (firstNumber - secondNumber == result);
+  BoxType _findBoxType(int index) {
+    if (index == 1) {
+      return BoxType.arithmeticOperator;
+    } else if (index == 3) {
+      return BoxType.equalMark;
+    } else {
+      return BoxType.number;
+    }
   }
 }
