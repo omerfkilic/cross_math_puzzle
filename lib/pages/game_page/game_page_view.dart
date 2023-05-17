@@ -1,17 +1,9 @@
-import 'dart:developer' as developer;
-import 'dart:math';
-
-import 'package:collection/collection.dart';
 import 'package:cross_math_puzzle/helper/consts.dart';
-import 'package:cross_math_puzzle/helper/custom_extensions.dart';
+import 'package:cross_math_puzzle/pages/game_page/game_page_view_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cross_math_puzzle/helper/custom_exceptions.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
-import 'package:cross_math_puzzle/models/box_model.dart';
-import 'package:cross_math_puzzle/models/math_operation_model.dart';
-
-part 'game_page_view_model.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -21,10 +13,10 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  late _GamePageViewModel viewModel;
+  late GamePageViewModel viewModel;
   @override
   void initState() {
-    viewModel = _GamePageViewModel.instant;
+    viewModel = GamePageViewModel.instant;
     viewModel.prepareGameTable(columnSize: CConsts.gameTableColumnIndexSize, rowSize: CConsts.gameTableRowIndexSize);
     if (mounted) super.initState();
   }
@@ -46,9 +38,22 @@ class _GamePageState extends State<GamePage> {
           const SizedBox(width: 5),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                viewModel.hideNumbers();
-              });
+              try {
+                setState(() {
+                  viewModel.hideNumbers();
+                });
+              } on HideNumbersTimedOutException {
+                _showCErrorDialog(
+                  context: context,
+                  titleWidget: const Text('Hide Number TimedOut!'),
+                );
+              } catch (error) {
+                _showCErrorDialog(
+                  context: context,
+                  titleWidget: const Text('An Exception Occurred!'),
+                  contentWidget: Text(error.toString()),
+                );
+              }
             },
             child: const Text('Hide Numbers'),
           ),
@@ -100,7 +105,7 @@ class _GamePageState extends State<GamePage> {
                   _showCErrorDialog(
                     context: context,
                     titleWidget: const Text('FillBoxes TimedOut'),
-                    contentWidget: const Text('FillBoxes TimedOut! \n Maybe there isn\'t any correctly fillable operation'),
+                    contentWidget: const Text('FillBoxes TimedOut! \nMaybe there isn\'t any correctly fillable operation'),
                   );
                 } catch (error) {
                   _showCErrorDialog(
@@ -124,7 +129,7 @@ class _GamePageState extends State<GamePage> {
                 _showCErrorDialog(
                   context: context,
                   titleWidget: const Text('Add Math Operation timed out!'),
-                  contentWidget: const Text('Add Math Operation timed out! \n Please check is possible to add new math operation to game table!'),
+                  contentWidget: const Text('Add Math Operation timed out! \nPlease check is possible to add new math operation to game table!'),
                 );
               } catch (error) {
                 _showCErrorDialog(

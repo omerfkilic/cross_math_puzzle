@@ -1,10 +1,14 @@
 import 'package:cross_math_puzzle/models/box_model.dart';
+import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:flutter/material.dart';
 
 class CConsts {
   CConsts._();
   static int gameTableColumnIndexSize = 15;
   static int gameTableRowIndexSize = 15;
+
+  ///default easy
+  static GameDifficult gameDifficult = GameDifficult.easy;
 
   ///2 second
   static Duration addOperationTimeOutDuration = const Duration(seconds: -2);

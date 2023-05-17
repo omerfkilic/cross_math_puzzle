@@ -1,15 +1,28 @@
-part of 'game_page_view.dart';
+import 'dart:developer' as developer;
+import 'dart:math';
 
-class _GamePageViewModel {
-  _GamePageViewModel._();
-  static _GamePageViewModel? _instant;
-  static _GamePageViewModel get instant => _instant ??= _GamePageViewModel._();
+import 'package:collection/collection.dart';
+import 'package:cross_math_puzzle/helper/consts.dart';
+import 'package:cross_math_puzzle/helper/custom_extensions.dart';
+import 'package:flutter/material.dart';
+
+import 'package:cross_math_puzzle/helper/custom_exceptions.dart';
+import 'package:cross_math_puzzle/helper/enums.dart';
+import 'package:cross_math_puzzle/models/box_model.dart';
+import 'package:cross_math_puzzle/models/math_operation_model.dart';
+
+class GamePageViewModel {
+  GamePageViewModel._();
+  static GamePageViewModel? _instant;
+  static GamePageViewModel get instant => _instant ??= GamePageViewModel._();
   final Random _random = Random();
 
   final List<List<BoxModel>> gameTable = [];
 
   ///list of mathematical operations found in the game table
   final List<MathOperationModel> mathOperationsList = [];
+
+  final Set<int> hiddenNumbers = {};
 
   ///This function prepares [gameTable]
   void prepareGameTable({required int columnSize, required int rowSize}) {
@@ -27,38 +40,34 @@ class _GamePageViewModel {
   }
 
   int _findNumberBoxesCount() {
-    int count = 0;
+    Set<BoxModel> numberBoxes = {};
     for (var mathOperation in mathOperationsList) {
       for (var box in mathOperation.boxes) {
         if (box.boxType == BoxType.number) {
-          count++;
+          numberBoxes.add(box);
         }
       }
     }
-    return count;
+    return numberBoxes.length;
   }
 
-//TODO Oyun Zorluğunu ekleyip ona göre hideCount'ı ayarla
   void hideNumbers() {
-    int hideCount = _findNumberBoxesCount() ~/ 3;
-    //TODO hiddenNumbers listesi viewModel'e taşınabilir
-    List<int> hiddenNumbers = [];
-    int index = 0;
+    int hideCount = (_findNumberBoxesCount() * CConsts.gameDifficult.hiddenCountDivider).toInt();
+
     final DateTime startDateTime = DateTime.now();
-    while (index <= hideCount) {
+    while (hiddenNumbers.length <= hideCount) {
       MathOperationModel selectedMathOperation = mathOperationsList.randomElement!;
       BoxModel selectedBox = selectedMathOperation.numberBoxes.randomElement!;
       if (!selectedBox.isHidden && !selectedMathOperation.isAllNumberBoxesHidden([selectedBox])) {
         selectedBox.isHidden = true;
         hiddenNumbers.add(selectedBox.valueAsInt!);
-        index++;
       }
       if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
         developer.log('TimedOut!', name: 'hideNumbers');
-        throw HideNumbersTimedOutException('FillBoxes TimedOut!');
+        throw HideNumbersTimedOutException('HideNumbers TimedOut!');
       }
     }
-    // After we hide all boxes, we have to check is possible to solve this puzzle.
+    // After we hide all boxes, we have to check it is possible to solve this puzzle.
     //But i think we don't need this for now.
     //i'll check this after.
     //TODO puzzle'ın çözülebilir olduğunu anlama için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
@@ -81,7 +90,7 @@ class _GamePageViewModel {
         filledMathOperationList.add(mathOperation);
       } else {
         fillableMathOperation ??= mathOperation;
-        developer.log('Found one fillable MathOperation ', name: 'fillBoxes');
+        developer.log('Found one fillable MathOperation', name: 'fillBoxes');
       }
     }
 
@@ -169,6 +178,7 @@ class _GamePageViewModel {
             if (firstNumber == null) {
               firstNumber = _solveOperation(first: result, second: secondNumber!, arithmeticOperator: arithmeticOperator.reverse);
             } else {
+              //TODO if arithmeticOperator is - ekle
               secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
             }
             // x  y res
@@ -193,6 +203,7 @@ class _GamePageViewModel {
             // x  y res
             // 0  0  1
           } else {
+            //TODO if arithmeticOperator is - ekle
             firstNumber ??= _random.nextInt(result);
             secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
           }
@@ -203,7 +214,11 @@ class _GamePageViewModel {
           throw Exception();
         }
 
-        if (result! % 1 == 0 && result >= 0 && firstNumber! >= 0 && secondNumber! >= 0) {
+        if (result! % 1 == 0 &&
+            result >= 0 &&
+            firstNumber! >= 0 &&
+            secondNumber! >= 0 &&
+            isOperationCorrect(firstNumber: firstNumber, secondNumber: secondNumber, result: result, arithmeticOperator: arithmeticOperator)) {
           fillableMathOperation.boxes[0].value = firstNumber.toString();
           fillableMathOperation.boxes[1].value = arithmeticOperator.toString();
           fillableMathOperation.boxes[2].value = secondNumber.toString();
@@ -303,7 +318,7 @@ class _GamePageViewModel {
 
   void checkAllFilledOperationsAreCorrect() {
     for (var mathOperation in mathOperationsList) {
-      if (mathOperation.isOperationCorrect == false) {
+      if (mathOperation.isOperationResultCorrect == false) {
         throw OneOfTheOperationIsNotCorrectException('${mathOperation.getInfo} is not correct');
       }
     }
@@ -314,6 +329,7 @@ class _GamePageViewModel {
   void restartGameData({required int columnSize, required int rowSize}) {
     gameTable.clear();
     mathOperationsList.clear();
+    hiddenNumbers.clear();
     developer.log('Cleared gameTable and mathOperationsList!', name: 'restartFunction');
     prepareGameTable(columnSize: columnSize, rowSize: rowSize);
   }
@@ -391,9 +407,6 @@ class _GamePageViewModel {
   ///
   ///This exception will deleted before full version
   bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) =>
-      _findBoxAtCoordinate(newMathOperation.boxes[0].coordination).boxType == BoxType.number &&
-      _findBoxAtCoordinate(newMathOperation.boxes[2].coordination).boxType == BoxType.number &&
-      _findBoxAtCoordinate(newMathOperation.boxes[4].coordination).boxType == BoxType.number;
-
+      newMathOperation.numberBoxes.every((numberBox) => _findBoxAtCoordinate(numberBox.coordination).boxType == BoxType.number);
   BoxModel _findBoxAtCoordinate(BoxCoordination boxCoordination) => gameTable[boxCoordination.indexOfColumn][boxCoordination.indexOfRow];
 }
