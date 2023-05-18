@@ -1,7 +1,7 @@
 import 'package:cross_math_puzzle/components/exceptions/timed_out_exceptions.dart';
 import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/models/game_box_model.dart';
-import 'package:cross_math_puzzle/pages/game_page/game_page_view_model.dart';
+import 'package:cross_math_puzzle/pages/game_page/view_model/game_page_view_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cross_math_puzzle/components/exceptions/custom_exceptions.dart';
@@ -83,7 +83,7 @@ class _GamePageState extends State<GamePage> {
               } else {
                 _showCErrorDialog(
                   context: context,
-                  titleWidget: const Text('There are no operation here'),
+                  titleWidget: const Text('There Are no Operation Here'),
                 );
               }
             },
@@ -95,15 +95,15 @@ class _GamePageState extends State<GamePage> {
               if (viewModel.mathOperationsList.isNotEmpty) {
                 try {
                   setState(() {
-                    viewModel.fillGameBoxes();
+                    viewModel.fillOperationBoxes();
                   });
                 } on ThereIsNotAnyAvailableMathOperationToFillException {
                   _showCErrorDialog(
                     context: context,
                     titleWidget: const Text('There Is Not Any Available Math Operation To Fill!'),
-                    contentWidget: const Text('Can\'t find any operation addable numbers!\nPlease add free operation first!'),
+                    contentWidget: const Text('Can\'t find any operation fillable!\nPlease add free operation first!'),
                   );
-                } on FillGameBoxesTimedOutException catch (error) {
+                } on FillOperationBoxesTimedOutException catch (error) {
                   _showCErrorDialog(
                     context: context,
                     titleWidget: Text(error.toString()),
@@ -118,7 +118,7 @@ class _GamePageState extends State<GamePage> {
                 }
               }
             },
-            child: const Text('Fill Game Boxes'),
+            child: const Text('Fill Operation Boxes'),
           ),
           const SizedBox(width: 5),
           ElevatedButton(

@@ -18,14 +18,14 @@ class AddOperationTimedOutException extends CustomTimedOutException {
   }
 }
 
-class FillGameBoxesTimedOutException extends CustomTimedOutException {
+class FillOperationBoxesTimedOutException extends CustomTimedOutException {
   @override
   String? get message;
 
-  FillGameBoxesTimedOutException([super.message]);
+  FillOperationBoxesTimedOutException([super.message]);
   @override
   String toString() {
-    return message ?? "Fill Game Boxes Function Timed Out!";
+    return message ?? "Fill Operation Boxes Function Timed Out!";
   }
 }
 

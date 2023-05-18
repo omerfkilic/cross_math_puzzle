@@ -10,11 +10,12 @@ class CConsts {
   ///default `easy`
   static GameDifficult gameDifficult = GameDifficult.easy;
 
+//TODO daha genel bir isim bul
   /// `2` second
   static Duration addOperationTimeOutDuration = const Duration(seconds: -2);
 
   /// `5` second
-  static Duration fillGameBoxesTimeOutDuration = const Duration(seconds: -5);
+  static Duration fillOperationBoxesTimeOutDuration = const Duration(seconds: -5);
 
   /// `mathOperation`'s `numberBoxes` value limit
   ///

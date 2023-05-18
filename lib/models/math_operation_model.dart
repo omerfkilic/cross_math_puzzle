@@ -4,8 +4,6 @@ import 'package:cross_math_puzzle/models/game_box_model.dart';
 import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
 import 'package:flutter/material.dart';
 
-//TODO önce modellerin içindeki methodları extension yap daha sonra gamePageView'i
-
 class MathOperationModel {
   final List<GameBox> gameBoxes = [];
   final Axis operationDirection;
