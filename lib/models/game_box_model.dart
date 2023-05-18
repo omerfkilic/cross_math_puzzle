@@ -7,7 +7,7 @@ class GameBox {
   BoxType boxType;
   final GameBoxCoordination coordination;
 
-  ///means botType is BoxType.number and gameBox has value but hidden for game
+  ///means `botType` is `BoxType.number` and `gameBox` has value but `hidden`
   bool isHidden = false;
   Set<MathOperationModel> connectedMathOperations = <MathOperationModel>{};
   GameBox({
@@ -18,17 +18,17 @@ class GameBox {
 }
 
 extension GameBoxModelExtension on GameBox {
-  ///boxType == BoxType.empty
+  ///`boxType` == `BoxType.empty`
   bool get isEmpty => boxType == BoxType.empty;
 
-  ///boxType != BoxType.empty
+  ///`boxType` != `BoxType.empty`
   bool get isNotEmpty => !isEmpty;
 
   bool get hasValue => !(value == null || value!.isEmpty);
 
-  ///work if boxType == BoxType.number and hasValue
+  ///work if `boxType` == `BoxType.number` and `hasValue`
   ///
-  ///Otherwise returns null
+  ///Otherwise returns `null`
   int? get valueAsInt {
     if (boxType == BoxType.number) return int.tryParse(hasValue ? value! : '');
     return null;

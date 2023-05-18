@@ -5,13 +5,12 @@ import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
 import 'package:flutter/material.dart';
 
 //TODO önce modellerin içindeki methodları extension yap daha sonra gamePageView'i
-//TODO variable'ların ve methodların açıklamalarına ` ekle
-//AlT GR + ,
+
 class MathOperationModel {
   final List<GameBox> gameBoxes = [];
   final Axis operationDirection;
 
-  ///returns if all gameBoxes filled
+  ///returns if all `gameBoxes` are `filled`
   bool get areGameBoxesFilled => gameBoxes.every((element) => element.hasValue);
   List<GameBox> get numberBoxes => [gameBoxes[0], gameBoxes[2], gameBoxes[4]];
 
@@ -44,16 +43,16 @@ class MathOperationModel {
 }
 
 extension MathOperationModelExtension on MathOperationModel {
-  ///if all numberBoxes are hidden except [exceptedList] has
+  ///if all `numberBoxes` are `hidden` except [exceptedList] has
   bool isAllNumberBoxesHidden({List<GameBox> exceptedList = const []}) => numberBoxes.every(
         (numberBox) => (exceptedList.any((GameBox gameBox) => gameBox == numberBox) || numberBox.isHidden),
       );
 
   //TODO bu yapıyı düşün!
 
-  ///if this.areGameBoxesFilled == false returns false
+  ///if `areGameBoxesFilled` is `false` returns `false`
   ///
-  ///checks is result of the transaction correct
+  ///checks is result of the transaction `correct`
   bool get isOperationResultCorrect {
     if (!areGameBoxesFilled) {
       return false;

@@ -7,16 +7,18 @@ class CConsts {
   static int gameTableColumnIndexSize = 15;
   static int gameTableRowIndexSize = 15;
 
-  ///default easy
+  ///default `easy`
   static GameDifficult gameDifficult = GameDifficult.easy;
 
-  ///2 second
+  /// `2` second
   static Duration addOperationTimeOutDuration = const Duration(seconds: -2);
 
-  ///5 second
+  /// `5` second
   static Duration fillGameBoxesTimeOutDuration = const Duration(seconds: -5);
 
-  /// mathOperation number boxes value limit
+  /// `mathOperation`'s `numberBoxes` value limit
+  ///
+  /// default `25`
   static int operationBoxNumberLimit = 25;
 
   static bool isOperationNumberIncludeZero = false;

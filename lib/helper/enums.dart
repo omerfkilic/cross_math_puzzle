@@ -6,15 +6,15 @@ enum BoxType {
 }
 
 enum ArithmeticOperatorTypes {
-  ///'+'
+  /// `+`
   addition,
 
-  ///'-'
+  /// `-`
   subtraction,
 
-  ///'*'
+  /// `*`
   // multiplication,
-  ///'/'
+  /// `/`
   // division,
   ;
 

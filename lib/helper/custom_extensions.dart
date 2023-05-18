@@ -5,7 +5,7 @@ import 'package:cross_math_puzzle/helper/enums.dart';
 extension GetRandomElementFromListExtension<T> on List<T> {
   ///returns random element of list
   ///
-  ///if list is empty return null
+  ///if list is empty return `null`
   T? get randomElement {
     if (isEmpty) {
       return null;
@@ -15,11 +15,11 @@ extension GetRandomElementFromListExtension<T> on List<T> {
 }
 
 extension GameDifficultExtension on GameDifficult {
-  ///easy 0.4
+  ///easy `0.4`
   ///
-  ///medium 0.65
+  ///medium `0.65`
   ///
-  ///hard 0.825
+  ///hard `0.825`
   double get hiddenCountDivider {
     switch (this) {
       case GameDifficult.easy:

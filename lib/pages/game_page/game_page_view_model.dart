@@ -27,7 +27,7 @@ class GamePageViewModel {
 
   final Set<int> hiddenNumbers = {};
 
-  ///This function prepares [gameTable]
+  ///This function prepares `gameTable`
   void prepareGameTable({required int columnSize, required int rowSize}) {
     for (int indexOfColumn = 0; indexOfColumn < columnSize; indexOfColumn++) {
       gameTable.add(
@@ -67,10 +67,10 @@ class GamePageViewModel {
       }
       if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
         developer.log('TimedOut!', name: 'hideNumbers');
-        throw HideNumbersTimedOutException('HideNumbers TimedOut!');
+        throw HideNumbersTimedOutException();
       }
     }
-    // After we hide all game boxes, we have to check it is possible to solve this puzzle.
+    // After we hide all gameBoxes, we have to check it is possible to solve this puzzle.
     //But i think we don't need this for now.
     //i'll check this after.
     //TODO puzzle'ın çözülebilir olduğunu anlama için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
@@ -233,7 +233,7 @@ class GamePageViewModel {
         }
         if (startDateTime.isBefore(DateTime.now().add(CConsts.fillGameBoxesTimeOutDuration))) {
           developer.log('TimedOut!', name: 'fillGameBoxes');
-          throw FillGameBoxesTimedOutException('FillGameBoxes TimedOut!');
+          throw FillGameBoxesTimedOutException();
         }
         developer.log('New filled operation didn\'t fit gameTable', name: 'fillGameBoxes');
       }
@@ -314,7 +314,7 @@ class GamePageViewModel {
       if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
         developer.log('addOperation function timed out!!', name: 'addOperation');
 
-        throw AddOperationTimedOutException('Add Operation Timed Out');
+        throw AddOperationTimedOutException();
       }
     }
   }
@@ -328,7 +328,7 @@ class GamePageViewModel {
     developer.log('All Filled Operations Are Correct', name: 'checkAllFilledOperationsAreCorrect');
   }
 
-  ///clears [gameTable] and [mathOperationsList]
+  ///clears `gameTable` and `mathOperationsList`
   void restartGameData({required int columnSize, required int rowSize}) {
     gameTable.clear();
     mathOperationsList.clear();
@@ -337,7 +337,7 @@ class GamePageViewModel {
     prepareGameTable(columnSize: columnSize, rowSize: rowSize);
   }
 
-  ///Checks if [newMathOperation]'s [BoxType]s matches gameTable's [BoxType]'s
+  ///Checks if `newMathOperation`'s `BoxType`s matches `gameTable`'s `BoxType`s
   bool _isPossibleToAddNewOperation({required MathOperationModel newMathOperation}) {
     //Checks if mathOperationList has newMathOperation already
     if (mathOperationsList.any((mathOperationModel) => (mathOperationModel.gameBoxes.first.isSameCoordination(newMathOperation.gameBoxes.first) &&
@@ -406,7 +406,7 @@ class GamePageViewModel {
     }
   }
 
-  ///This check for all number filled but operation won't state
+  ///This check for all `numberBoxes` places `filled` by other operations
   ///
   ///This exception will deleted before full version
   bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) =>
