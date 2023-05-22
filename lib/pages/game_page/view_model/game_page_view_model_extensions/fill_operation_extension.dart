@@ -69,9 +69,6 @@ extension FillOperationExtension on GamePageViewModel {
         arithmeticOperator ??= ArithmeticOperatorTypes.values.randomElement!;
         developer.log('Filled all gameBoxes which has another gameBoxes has value at the same coordinate', name: 'fillOperationBoxes');
 
-        //TODO sayi - x = sayi olduğunda patlıyor
-        //Aşağıdaki if'leri önceliklendir
-
         //TODO Burayı method olarak dışarı çıkartmamız lazım
         //içine firstNumber, secondNumber, result'ı alır
         //HiddenNumbers'ı da alır içine
@@ -101,8 +98,11 @@ extension FillOperationExtension on GamePageViewModel {
             if (firstNumber == null) {
               firstNumber = _solveOperation(first: result, second: secondNumber!, arithmeticOperator: arithmeticOperator.reverse);
             } else {
-              //TODO if arithmeticOperator is - ekle
-              secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
+              // 5 + x = 10 => x = 10 - 5
+              // 10 - x = 5 => x = 10 - 5
+              // that means 'subtract smaller from bigger' works for addition and subtraction
+              secondNumber = _solveOperation(
+                  first: max(firstNumber, result), second: min(firstNumber, result), arithmeticOperator: ArithmeticOperatorTypes.subtraction);
             }
             // x  y res
             // 1  1  0
@@ -126,9 +126,8 @@ extension FillOperationExtension on GamePageViewModel {
             // x  y res
             // 0  0  1
           } else {
-            //TODO if arithmeticOperator is - ekle
-            firstNumber ??= getRandomInt(result);
-            secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
+            secondNumber ??= getRandomInt(result);
+            firstNumber = _solveOperation(first: result, second: secondNumber, arithmeticOperator: arithmeticOperator.reverse);
           }
           ///// this condition wont happened cause _checkThereAreTooMuchConnectedOperationException will ignore
           //if didn't we will throw an exception for now
