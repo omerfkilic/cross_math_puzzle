@@ -7,7 +7,7 @@ class GameBox {
   BoxType boxType;
   final GameBoxCoordination coordination;
 
-  ///means `botType` is `BoxType.number` and `gameBox` has value but `hidden`
+  ///means `boxType` is `BoxType.number` and `gameBox` has value but `hidden`
   bool isHidden = false;
   Set<MathOperationModel> connectedMathOperations = <MathOperationModel>{};
   GameBox({
@@ -15,6 +15,9 @@ class GameBox {
     required this.coordination,
     this.boxType = BoxType.empty,
   });
+
+  @override
+  String toString() => 'coordination : $coordination, value : ${value ?? 'null'}, isHidden : $isHidden';
 }
 
 extension GameBoxModelExtension on GameBox {

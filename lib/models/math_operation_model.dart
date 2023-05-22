@@ -1,4 +1,5 @@
 import 'package:cross_math_puzzle/components/functions.dart';
+import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:cross_math_puzzle/models/game_box_model.dart';
 import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
@@ -11,7 +12,7 @@ class MathOperationModel {
   ///returns if all `gameBoxes` are `filled`
   bool get areGameBoxesFilled => gameBoxes.every((element) => element.hasValue);
   List<GameBox> get numberBoxes => [gameBoxes[0], gameBoxes[2], gameBoxes[4]];
-
+  //TODO firstNumberBox, secondNumberBox falan ekle
   GameBox get operatorBox => gameBoxes[1];
 
   MathOperationModel({
@@ -38,19 +39,29 @@ class MathOperationModel {
         break;
     }
   }
+  @override
+  String toString() =>
+      '$getInfo ${gameBoxes[0].value ?? 'x'} ${gameBoxes[1].value ?? '±'} ${gameBoxes[2].value ?? 'y'} ${gameBoxes[3].value ?? '='} ${gameBoxes[4].value ?? 'res'}';
 }
 
 extension MathOperationModelExtension on MathOperationModel {
-  //TODO Bu method'u daha sonra kaldırmamız lazım! Yada değil düşün bunu!
-  //Ayarlar kısmına zorluk ayarı olarak ekleyebiliriz belki
-  //TODO Bu fonksiyonu bağlı olduğu diğer operation'ları da kontrol edecek hale getir
+  //TODO Bunu box'ın içinde kontrol edebiliriz
+  //Bu şekilde connectedOperations'a erişimimiz olur
 
-  ///if all `numberBoxes` are `hidden` except [exceptedList] has
-  bool isAllNumberBoxesHidden({List<GameBox> exceptedList = const []}) => numberBoxes.every(
-        (numberBox) => (exceptedList.any((GameBox gameBox) => gameBox == numberBox) || numberBox.isHidden),
-      );
+  //Fonksiyonun ismi allOtherBoxesHidden falan olabilir
+  ///if all `numberBoxes` are `hidden` except [exceptedList] elements
+  ///
+  ///if [CConsts.canOperationsAllNumberBoxesHidden] `false` returns `false`
+  bool areAllNumberBoxesHidden({List<GameBox> exceptedList = const []}) {
+    if (!CConsts.canOperationsAllNumberBoxesHidden) {
+      return false;
+    }
+    return numberBoxes.every(
+      (numberBox) => (exceptedList.any((GameBox gameBox) => gameBox == numberBox) || numberBox.isHidden),
+    );
+  }
 
-  //TODO bu yapıyı düşün!
+  bool get hasAnyHiddenNumber => numberBoxes.any((GameBox gameBox) => gameBox.isHidden);
 
   ///if `areGameBoxesFilled` is `false` returns `false`
   ///

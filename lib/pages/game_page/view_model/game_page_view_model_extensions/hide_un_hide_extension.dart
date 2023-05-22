@@ -17,22 +17,30 @@ extension HideUnHideExtension on GamePageViewModel {
     int hideCount = (_findNumberBoxesCount() * CConsts.gameDifficult.hiddenCountDivider).toInt();
 
     final DateTime startDateTime = DateTime.now();
-    while (hiddenNumbers.length <= hideCount) {
+    while (hiddenBoxes.length <= hideCount) {
       MathOperationModel selectedMathOperation = mathOperationsList.randomElement!;
       GameBox selectedBox = selectedMathOperation.numberBoxes.randomElement!;
-      if (!selectedBox.isHidden && !selectedMathOperation.isAllNumberBoxesHidden(exceptedList: [selectedBox])) {
+      if (!selectedBox.isHidden && !selectedMathOperation.areAllNumberBoxesHidden(exceptedList: [selectedBox])) {
         selectedBox.isHidden = true;
-        hiddenNumbers.add(selectedBox.valueAsInt!);
+        hiddenBoxes.add(selectedBox);
       }
-      //TODO hideCount dolduğunda hiç hidden box'ı olmayan operation'lardan birer tane hide'la
       if (startDateTime.isBefore(DateTime.now().add(CConsts.doubleBoxesTimeOutDuration))) {
         developer.log('TimedOut!', name: 'hideNumbers');
         throw HideNumbersTimedOutException();
       }
     }
+    //This logic finds mathOperations wont has any hidden numberBox
+    //and hide one of them
+    for (MathOperationModel mathOperation in mathOperationsList) {
+      if (!mathOperation.hasAnyHiddenNumber) {
+        GameBox selectedBox = mathOperation.numberBoxes.randomElement!;
+        selectedBox.isHidden = true;
+        hiddenBoxes.add(selectedBox);
+      }
+    }
     // After we hide all gameBoxes, we have to check it is possible to solve this puzzle.
     //But i think we don't need this for now.
-    //i'll check this after.
+    //i'll check this later.
     //TODO puzzle'ın çözülebilir olduğunu anlamak için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
   }
 
@@ -42,6 +50,6 @@ extension HideUnHideExtension on GamePageViewModel {
         gameBox.isHidden = false;
       }
     }
-    hiddenNumbers.clear();
+    hiddenBoxes.clear();
   }
 }

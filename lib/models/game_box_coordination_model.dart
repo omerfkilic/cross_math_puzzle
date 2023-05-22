@@ -26,6 +26,8 @@ class GameBoxCoordination {
     required this.indexOfColumn,
     required this.indexOfRow,
   });
+  @override
+  String toString() => '($indexOfColumn, $indexOfRow)';
 }
 
 extension GameBoxCoordinationExtension on GameBoxCoordination {

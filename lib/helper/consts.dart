@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 class CConsts {
   CConsts._();
-  static int gameTableColumnIndexSize = 15;
-  static int gameTableRowIndexSize = 15;
+  static int gameTableColumnIndexSize = 12;
+  static int gameTableRowIndexSize = 12;
 
-  ///default `easy`
+  ///default `medium`
   static GameDifficult gameDifficult = GameDifficult.medium;
 
   /// `1` second
@@ -21,10 +21,13 @@ class CConsts {
   /// default `25`
   static int operationBoxNumberLimit = 25;
 
-  ///if true boxes can be 0
+  ///if `true` `numberBoxes` can be `0`
   ///
-  ///default false
+  ///default `false`
   static bool isOperationNumberIncludeZero = false;
+
+  ///default `true`
+  static bool canOperationsAllNumberBoxesHidden = true;
 
   static GameBoxCoordination firstOperationStartCoordination = GameBoxCoordination(indexOfColumn: 0, indexOfRow: 0);
 

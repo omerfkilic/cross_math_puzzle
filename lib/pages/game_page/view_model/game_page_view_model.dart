@@ -29,6 +29,6 @@ class GamePageViewModel {
   ///list of mathematical operations found in the game table
   final List<MathOperationModel> mathOperationsList = [];
 
-//TODO Set<hiddenBoxes> yap
-  final List<int> hiddenNumbers = [];
+//TODO Bunu dinamik yapacak bir yöntem bul
+  final Set<GameBox> hiddenBoxes = {};
 }
