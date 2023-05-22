@@ -140,7 +140,7 @@ extension FillOperationExtension on GamePageViewModel {
             (CConsts.isOperationNumberIncludeZero == true
                 ? (result > 0 && firstNumber! > 0 && secondNumber! > 0)
                 : (result >= 0 && firstNumber! >= 0 && secondNumber! >= 0)) &&
-            isOperationCorrect(firstNumber: firstNumber, secondNumber: secondNumber, result: result, arithmeticOperator: arithmeticOperator)) {
+            isTransactionCorrect(firstNumber: firstNumber, secondNumber: secondNumber, result: result, arithmeticOperator: arithmeticOperator)) {
           fillableMathOperation.gameBoxes[0].value = firstNumber.toString();
           fillableMathOperation.gameBoxes[1].value = arithmeticOperator.toString();
           fillableMathOperation.gameBoxes[2].value = secondNumber.toString();
