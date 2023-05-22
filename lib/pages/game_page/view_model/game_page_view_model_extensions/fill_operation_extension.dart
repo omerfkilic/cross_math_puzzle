@@ -69,6 +69,9 @@ extension FillOperationExtension on GamePageViewModel {
         arithmeticOperator ??= ArithmeticOperatorTypes.values.randomElement!;
         developer.log('Filled all gameBoxes which has another gameBoxes has value at the same coordinate', name: 'fillOperationBoxes');
 
+        //TODO sayi - x = sayi olduğunda patlıyor
+        //Aşağıdaki if'leri önceliklendir
+
         //TODO Burayı method olarak dışarı çıkartmamız lazım
         //içine firstNumber, secondNumber, result'ı alır
         //HiddenNumbers'ı da alır içine
@@ -148,7 +151,7 @@ extension FillOperationExtension on GamePageViewModel {
 
           break;
         }
-        if (startDateTime.isBefore(DateTime.now().add(CConsts.fillOperationBoxesTimeOutDuration))) {
+        if (startDateTime.isBefore(DateTime.now().add(CConsts.doubleBoxesTimeOutDuration))) {
           developer.log('TimedOut!', name: 'fillOperationBoxes');
           throw FillOperationBoxesTimedOutException();
         }

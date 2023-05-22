@@ -41,7 +41,12 @@ class MathOperationModel {
 }
 
 extension MathOperationModelExtension on MathOperationModel {
+  //TODO Bu method'u daha sonra kaldırmamız lazım! Yada değil düşün bunu!
+  //Ayarlar kısmına zorluk ayarı olarak ekleyebiliriz belki
+  //TODO Bu fonksiyonu bağlı olduğu diğer operation'ları da kontrol edecek hale getir
+
   ///if all `numberBoxes` are `hidden` except [exceptedList] has
+  ///
   bool isAllNumberBoxesHidden({List<GameBox> exceptedList = const []}) => numberBoxes.every(
         (numberBox) => (exceptedList.any((GameBox gameBox) => gameBox == numberBox) || numberBox.isHidden),
       );
@@ -50,7 +55,7 @@ extension MathOperationModelExtension on MathOperationModel {
 
   ///if `areGameBoxesFilled` is `false` returns `false`
   ///
-  ///checks is result of the transaction `correct`
+  ///checks, result of the transaction is `correct`
   bool get isOperationResultCorrect {
     if (!areGameBoxesFilled) {
       return false;

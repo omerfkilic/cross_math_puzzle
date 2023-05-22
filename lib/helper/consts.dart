@@ -8,20 +8,20 @@ class CConsts {
   static int gameTableRowIndexSize = 15;
 
   ///default `easy`
-  static GameDifficult gameDifficult = GameDifficult.easy;
+  static GameDifficult gameDifficult = GameDifficult.medium;
 
-//TODO daha genel bir isim bul
+  /// `1` second
+  static Duration singleTimeOutDuration = const Duration(seconds: -1);
+
   /// `2` second
-  static Duration addOperationTimeOutDuration = const Duration(seconds: -2);
-
-  /// `5` second
-  static Duration fillOperationBoxesTimeOutDuration = const Duration(seconds: -5);
+  static Duration doubleBoxesTimeOutDuration = const Duration(seconds: -2);
 
   /// `mathOperation`'s `numberBoxes` value limit
   ///
   /// default `25`
   static int operationBoxNumberLimit = 25;
 
+//TODO bunu default olarak ekle
   static bool isOperationNumberIncludeZero = false;
 
   static GameBoxCoordination firstOperationStartCoordination = GameBoxCoordination(indexOfColumn: 0, indexOfRow: 0);

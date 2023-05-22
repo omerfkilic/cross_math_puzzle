@@ -24,7 +24,8 @@ extension HideUnHideExtension on GamePageViewModel {
         selectedBox.isHidden = true;
         hiddenNumbers.add(selectedBox.valueAsInt!);
       }
-      if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
+      //TODO hideCount dolduğunda hiç hidden box'ı olmayan operation'lardan birer tane hide'la
+      if (startDateTime.isBefore(DateTime.now().add(CConsts.doubleBoxesTimeOutDuration))) {
         developer.log('TimedOut!', name: 'hideNumbers');
         throw HideNumbersTimedOutException();
       }
@@ -32,7 +33,7 @@ extension HideUnHideExtension on GamePageViewModel {
     // After we hide all gameBoxes, we have to check it is possible to solve this puzzle.
     //But i think we don't need this for now.
     //i'll check this after.
-    //TODO puzzle'ın çözülebilir olduğunu anlama için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
+    //TODO puzzle'ın çözülebilir olduğunu anlamak için kullanıcının izleyeceği yöntemleri bul ve algoritmaya ekle
   }
 
   void unHideNumbers() {
@@ -41,5 +42,6 @@ extension HideUnHideExtension on GamePageViewModel {
         gameBox.isHidden = false;
       }
     }
+    hiddenNumbers.clear();
   }
 }

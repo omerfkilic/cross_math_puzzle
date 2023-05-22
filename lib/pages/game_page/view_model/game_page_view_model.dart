@@ -30,5 +30,6 @@ class GamePageViewModel {
   ///list of mathematical operations found in the game table
   final List<MathOperationModel> mathOperationsList = [];
 
-  final Set<int> hiddenNumbers = {};
+//TODO Set<hiddenBoxes> yap
+  final List<int> hiddenNumbers = [];
 }

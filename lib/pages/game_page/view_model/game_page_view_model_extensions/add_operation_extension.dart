@@ -60,7 +60,7 @@ extension AddOperationExtension on GamePageViewModel {
         rethrow;
       }
       //true means function timed out
-      if (startDateTime.isBefore(DateTime.now().add(CConsts.addOperationTimeOutDuration))) {
+      if (startDateTime.isBefore(DateTime.now().add(CConsts.singleTimeOutDuration))) {
         developer.log('addOperation function timed out!!', name: 'addOperation');
 
         throw AddOperationTimedOutException();

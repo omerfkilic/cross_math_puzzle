@@ -45,8 +45,7 @@ enum ArithmeticOperatorTypes {
       //   ArithmeticOperatorTypes.division;
       //   break;
     }
-    //TODO custom exception yaz
-    throw Exception();
+    throw Exception('Arithmetic Operation Type Wrong');
   }
 }
 
