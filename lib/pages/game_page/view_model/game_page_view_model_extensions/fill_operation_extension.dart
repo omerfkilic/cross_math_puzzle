@@ -83,8 +83,8 @@ extension FillOperationExtension on GamePageViewModel {
         ///////////////////
         //if all values are null
         if (firstNumber == null && secondNumber == null && result == null) {
-          firstNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
-          secondNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
+          firstNumber ??= getRandomInt(CConsts.operationBoxNumberLimit);
+          secondNumber ??= getRandomInt(CConsts.operationBoxNumberLimit);
           result = _solveOperation(first: firstNumber, second: secondNumber, arithmeticOperator: arithmeticOperator);
 
           //////////////////////
@@ -120,14 +120,14 @@ extension FillOperationExtension on GamePageViewModel {
           // 0  1  0
           // 1  0  0
           if (result == null) {
-            firstNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
-            secondNumber ??= _random.nextInt(CConsts.operationBoxNumberLimit);
+            firstNumber ??= getRandomInt(CConsts.operationBoxNumberLimit);
+            secondNumber ??= getRandomInt(CConsts.operationBoxNumberLimit);
             result = _solveOperation(first: firstNumber, second: secondNumber, arithmeticOperator: arithmeticOperator);
             // x  y res
             // 0  0  1
           } else {
             //TODO if arithmeticOperator is - ekle
-            firstNumber ??= _random.nextInt(result);
+            firstNumber ??= getRandomInt(result);
             secondNumber = _solveOperation(first: result, second: firstNumber, arithmeticOperator: arithmeticOperator.reverse);
           }
           ///// this condition wont happened cause _checkThereAreTooMuchConnectedOperationException will ignore
@@ -138,9 +138,9 @@ extension FillOperationExtension on GamePageViewModel {
         }
 
         if (result! % 1 == 0 &&
-            result >= 0 &&
-            firstNumber! >= 0 &&
-            secondNumber! >= 0 &&
+            (CConsts.isOperationNumberIncludeZero == true
+                ? (result > 0 && firstNumber! > 0 && secondNumber! > 0)
+                : (result >= 0 && firstNumber! >= 0 && secondNumber! >= 0)) &&
             isOperationCorrect(firstNumber: firstNumber, secondNumber: secondNumber, result: result, arithmeticOperator: arithmeticOperator)) {
           fillableMathOperation.gameBoxes[0].value = firstNumber.toString();
           fillableMathOperation.gameBoxes[1].value = arithmeticOperator.toString();

@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
 
 bool isOperationCorrect({
@@ -13,4 +16,12 @@ bool isOperationCorrect({
     case ArithmeticOperatorTypes.subtraction:
       return (firstNumber - secondNumber == result);
   }
+}
+
+Random _random = Random();
+
+int getRandomInt(
+  int max,
+) {
+  return _random.nextInt(max) + (CConsts.isOperationNumberIncludeZero ? 0 : 1);
 }

@@ -21,7 +21,9 @@ class CConsts {
   /// default `25`
   static int operationBoxNumberLimit = 25;
 
-//TODO bunu default olarak ekle
+  ///if true boxes can be 0
+  ///
+  ///default false
   static bool isOperationNumberIncludeZero = false;
 
   static GameBoxCoordination firstOperationStartCoordination = GameBoxCoordination(indexOfColumn: 0, indexOfRow: 0);

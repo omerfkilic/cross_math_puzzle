@@ -23,7 +23,6 @@ class GamePageViewModel {
   GamePageViewModel._();
   static GamePageViewModel? _instant;
   static GamePageViewModel get instant => _instant ??= GamePageViewModel._();
-  final Random _random = Random();
 
   final List<List<GameBox>> gameTable = [];
 
