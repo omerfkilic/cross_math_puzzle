@@ -17,10 +17,10 @@ extension HideUnHideExtension on GamePageViewModel {
     int hideCount = (_findNumberBoxesCount() * CConsts.gameDifficult.hiddenCountDivider).toInt();
 
     final DateTime startDateTime = DateTime.now();
-    while (hiddenBoxes.length <= hideCount) {
+    while (hiddenBoxes.length < hideCount) {
       MathOperationModel selectedMathOperation = mathOperationsList.randomElement!;
       GameBox selectedBox = selectedMathOperation.numberBoxes.randomElement!;
-      if (!selectedBox.isHidden && !selectedMathOperation.areAllNumberBoxesHidden(exceptedList: [selectedBox])) {
+      if (!selectedBox.isHidden && selectedBox.canHidable) {
         selectedBox.isHidden = true;
         hiddenBoxes.add(selectedBox);
       }

@@ -43,4 +43,8 @@ extension GameBoxModelExtension on GameBox {
     value = null;
     boxType = BoxType.empty;
   }
+
+  ///checks if any `connectedOperation` will all `hidden` after this `gameBox` `hidden`
+  bool get canHidable => connectedMathOperations.any((MathOperationModel connectedMathOperation) =>
+      !connectedMathOperation.numberBoxes.every((GameBox numberBox) => this == numberBox || numberBox.isHidden));
 }

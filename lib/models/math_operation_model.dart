@@ -1,5 +1,4 @@
 import 'package:cross_math_puzzle/components/functions.dart';
-import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:cross_math_puzzle/models/game_box_model.dart';
 import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
@@ -45,22 +44,6 @@ class MathOperationModel {
 }
 
 extension MathOperationModelExtension on MathOperationModel {
-  //TODO Bunu box'ın içinde kontrol edebiliriz
-  //Bu şekilde connectedOperations'a erişimimiz olur
-
-  //Fonksiyonun ismi allOtherBoxesHidden falan olabilir
-  ///if all `numberBoxes` are `hidden` except [exceptedList] elements
-  ///
-  ///if [CConsts.canOperationsAllNumberBoxesHidden] `false` returns `false`
-  bool areAllNumberBoxesHidden({List<GameBox> exceptedList = const []}) {
-    if (!CConsts.canOperationsAllNumberBoxesHidden) {
-      return false;
-    }
-    return numberBoxes.every(
-      (numberBox) => (exceptedList.any((GameBox gameBox) => gameBox == numberBox) || numberBox.isHidden),
-    );
-  }
-
   bool get hasAnyHiddenNumber => numberBoxes.any((GameBox gameBox) => gameBox.isHidden);
 
   ///if `areGameBoxesFilled` is `false` returns `false`

@@ -27,7 +27,7 @@ class CConsts {
   static bool isOperationNumberIncludeZero = false;
 
   ///default `true`
-  static bool canOperationsAllNumberBoxesHidden = true;
+  static bool canOperationsAllNumberBoxesHidden = false;
 
   static GameBoxCoordination firstOperationStartCoordination = GameBoxCoordination(indexOfColumn: 0, indexOfRow: 0);
 
