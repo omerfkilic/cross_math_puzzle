@@ -27,7 +27,7 @@ extension FillOperationExtension on GamePageViewModel {
         //for firstNumber
         for (var mathOperation in filledMathOperationList) {
           GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
-              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[0]) && mathOperation.gameBoxes[0].hasValue);
+              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.firstNumberBox) && mathOperation.firstNumberBox.hasValue);
           if (filledBox != null) {
             firstNumber = int.tryParse(filledBox.value!);
             break;
@@ -37,7 +37,7 @@ extension FillOperationExtension on GamePageViewModel {
         //for secondNumber
         for (var mathOperation in filledMathOperationList) {
           final GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
-              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[2]) && mathOperation.gameBoxes[2].hasValue);
+              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.secondNumberBox) && mathOperation.secondNumberBox.hasValue);
           if (filledBox != null) {
             secondNumber = int.tryParse(filledBox.value!);
             break;
@@ -47,7 +47,7 @@ extension FillOperationExtension on GamePageViewModel {
         //for result
         for (var mathOperation in filledMathOperationList) {
           final GameBox? filledBox = mathOperation.gameBoxes.firstWhereOrNull(
-              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.gameBoxes[4]) && mathOperation.gameBoxes[4].hasValue);
+              (GameBox gameBox) => gameBox.isSameCoordination(fillableMathOperation!.resultNumberBox) && mathOperation.resultNumberBox.hasValue);
           if (filledBox != null) {
             result = int.tryParse(filledBox.value!);
             break;
@@ -141,11 +141,11 @@ extension FillOperationExtension on GamePageViewModel {
                 ? (result > 0 && firstNumber! > 0 && secondNumber! > 0)
                 : (result >= 0 && firstNumber! >= 0 && secondNumber! >= 0)) &&
             isTransactionCorrect(firstNumber: firstNumber, secondNumber: secondNumber, result: result, arithmeticOperator: arithmeticOperator)) {
-          fillableMathOperation.gameBoxes[0].value = firstNumber.toString();
-          fillableMathOperation.gameBoxes[1].value = arithmeticOperator.toString();
-          fillableMathOperation.gameBoxes[2].value = secondNumber.toString();
-          fillableMathOperation.gameBoxes[3].value = '=';
-          fillableMathOperation.gameBoxes[4].value = result.toString();
+          fillableMathOperation.firstNumberBox.value = firstNumber.toString();
+          fillableMathOperation.operatorBox.value = arithmeticOperator.toString();
+          fillableMathOperation.secondNumberBox.value = secondNumber.toString();
+          fillableMathOperation.equalMarkBox.value = '=';
+          fillableMathOperation.resultNumberBox.value = result.toString();
           developer.log('Filled all missing values and added gameTable', name: 'fillOperationBoxes');
 
           break;

@@ -10,9 +10,13 @@ class MathOperationModel {
 
   ///returns if all `gameBoxes` are `filled`
   bool get areGameBoxesFilled => gameBoxes.every((element) => element.hasValue);
-  List<GameBox> get numberBoxes => [gameBoxes[0], gameBoxes[2], gameBoxes[4]];
-  //TODO firstNumberBox, secondNumberBox falan ekle
+  List<GameBox> get numberBoxes => [firstNumberBox, secondNumberBox, resultNumberBox];
+
+  GameBox get firstNumberBox => gameBoxes[0];
   GameBox get operatorBox => gameBoxes[1];
+  GameBox get secondNumberBox => gameBoxes[2];
+  GameBox get equalMarkBox => gameBoxes[3];
+  GameBox get resultNumberBox => gameBoxes[4];
 
   MathOperationModel({
     required int indexOfColumn,
