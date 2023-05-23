@@ -29,6 +29,15 @@ class GamePageViewModel {
   ///list of mathematical operations found in the game table
   final List<MathOperationModel> mathOperationsList = [];
 
-//TODO Bunu dinamik yapacak bir yöntem bul
-  final Set<GameBox> hiddenBoxes = {};
+  Set<GameBox> get hiddenBoxes {
+    Set<GameBox> hiddenBoxesSet = {};
+    for (MathOperationModel mathOperation in mathOperationsList) {
+      for (GameBox gameBox in mathOperation.numberBoxes) {
+        if (gameBox.isHidden) {
+          hiddenBoxesSet.add(gameBox);
+        }
+      }
+    }
+    return hiddenBoxesSet;
+  }
 }

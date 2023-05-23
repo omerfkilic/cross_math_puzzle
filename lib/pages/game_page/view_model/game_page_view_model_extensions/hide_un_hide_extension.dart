@@ -20,9 +20,8 @@ extension HideUnHideExtension on GamePageViewModel {
     while (hiddenBoxes.length < hideCount) {
       MathOperationModel selectedMathOperation = mathOperationsList.randomElement!;
       GameBox selectedBox = selectedMathOperation.numberBoxes.randomElement!;
-      if (!selectedBox.isHidden && selectedBox.canHidable) {
+      if (selectedBox.isHidable) {
         selectedBox.isHidden = true;
-        hiddenBoxes.add(selectedBox);
       }
       if (startDateTime.isBefore(DateTime.now().add(CConsts.doubleBoxesTimeOutDuration))) {
         developer.log('TimedOut!', name: 'hideNumbers');
@@ -31,11 +30,14 @@ extension HideUnHideExtension on GamePageViewModel {
     }
     //This logic finds mathOperations wont has any hidden numberBox
     //and hide one of them
-    for (MathOperationModel mathOperation in mathOperationsList) {
-      if (!mathOperation.hasAnyHiddenNumber) {
-        GameBox selectedBox = mathOperation.numberBoxes.randomElement!;
-        selectedBox.isHidden = true;
-        hiddenBoxes.add(selectedBox);
+    if (CConsts.areAllOperationAtLeastMustHaveOneHiddenBox) {
+      for (MathOperationModel mathOperation in mathOperationsList) {
+        if (!mathOperation.hasAnyHiddenNumber) {
+          GameBox selectedBox = mathOperation.numberBoxes.randomElement!;
+          if (selectedBox.isHidable) {
+            selectedBox.isHidden = true;
+          }
+        }
       }
     }
     // After we hide all gameBoxes, we have to check it is possible to solve this puzzle.

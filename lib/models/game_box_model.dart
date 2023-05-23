@@ -1,3 +1,4 @@
+import 'package:cross_math_puzzle/helper/consts.dart';
 import 'package:cross_math_puzzle/helper/enums.dart';
 import 'package:cross_math_puzzle/models/game_box_coordination_model.dart';
 import 'package:cross_math_puzzle/models/math_operation_model.dart';
@@ -44,7 +45,15 @@ extension GameBoxModelExtension on GameBox {
     boxType = BoxType.empty;
   }
 
+  //TODO açıklamayı düzenle
+
   ///checks if any `connectedOperation` will all `hidden` after this `gameBox` `hidden`
-  bool get canHidable => connectedMathOperations.any((MathOperationModel connectedMathOperation) =>
-      !connectedMathOperation.numberBoxes.every((GameBox numberBox) => this == numberBox || numberBox.isHidden));
+  ///
+  ///if already `hidden` returns `false`
+  ///
+  ///if [CConsts.canOperationsAllNumberBoxesHidden] is `false` returns `true`
+  bool get isHidable =>
+      !isHidden && CConsts.canOperationsAllNumberBoxesHidden ||
+      connectedMathOperations.every((MathOperationModel connectedMathOperation) =>
+          !connectedMathOperation.numberBoxes.every((GameBox numberBox) => this == numberBox || numberBox.isHidden));
 }

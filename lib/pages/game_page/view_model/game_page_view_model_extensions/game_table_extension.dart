@@ -20,7 +20,6 @@ extension GameTableExtension on GamePageViewModel {
   void restartGameData({required int columnSize, required int rowSize}) {
     gameTable.clear();
     mathOperationsList.clear();
-    hiddenBoxes.clear();
     developer.log('Cleared gameTable and mathOperationsList!', name: 'restartFunction');
     prepareGameTable(columnSize: columnSize, rowSize: rowSize);
   }
