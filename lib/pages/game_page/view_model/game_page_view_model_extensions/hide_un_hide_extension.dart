@@ -1,17 +1,12 @@
 part of '../game_page_view_model.dart';
 
 extension HideUnHideExtension on GamePageViewModel {
-  int _findNumberBoxesCount() {
-    Set<GameBox> numberBoxes = {};
-    for (var mathOperation in mathOperationsList) {
-      for (var gameBox in mathOperation.gameBoxes) {
-        if (gameBox.boxType == BoxType.number) {
-          numberBoxes.add(gameBox);
-        }
-      }
-    }
-    return numberBoxes.length;
-  }
+  //TODO expand methodunu code base'de başka nerelere ekleyebiliriz incele!
+  Set<GameBox> get hiddenBoxes => mathOperationsList
+      .expand<GameBox>((MathOperationModel mathOperation) => mathOperation.numberBoxes.where((GameBox numberBox) => numberBox.isHidden))
+      .toSet();
+
+  int _findNumberBoxesCount() => mathOperationsList.expand<GameBox>((MathOperationModel mathOperation) => mathOperation.numberBoxes).length;
 
   void hideNumbers() {
     int hideCount = (_findNumberBoxesCount() * CConsts.gameDifficult.hiddenCountDivider).toInt();
@@ -47,11 +42,8 @@ extension HideUnHideExtension on GamePageViewModel {
   }
 
   void unHideNumbers() {
-    for (var mathOperation in mathOperationsList) {
-      for (var gameBox in mathOperation.gameBoxes) {
-        gameBox.isHidden = false;
-      }
+    for (GameBox hiddenBox in hiddenBoxes) {
+      hiddenBox.isHidden = false;
     }
-    hiddenBoxes.clear();
   }
 }

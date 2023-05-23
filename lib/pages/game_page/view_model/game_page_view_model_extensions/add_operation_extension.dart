@@ -140,7 +140,6 @@ extension AddOperationExtension on GamePageViewModel {
   ///This check for all `numberBoxes` places `filled` by other operations
   ///
   ///This exception will deleted before full version
-  bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) =>
-      newMathOperation.numberBoxes.every((numberBox) => _findBoxAtCoordinate(numberBox.coordination).boxType == BoxType.number);
-  GameBox _findBoxAtCoordinate(GameBoxCoordination boxCoordination) => gameTable[boxCoordination.indexOfColumn][boxCoordination.indexOfRow];
+  bool _checkThereAreTooMuchConnectedOperationException({required MathOperationModel newMathOperation}) => newMathOperation.numberBoxes
+      .every((numberBox) => gameTable[numberBox.coordination.indexOfColumn][numberBox.coordination.indexOfRow].boxType == BoxType.number);
 }

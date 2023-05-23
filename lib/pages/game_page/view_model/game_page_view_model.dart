@@ -28,16 +28,4 @@ class GamePageViewModel {
 
   ///list of mathematical operations found in the game table
   final List<MathOperationModel> mathOperationsList = [];
-
-  Set<GameBox> get hiddenBoxes {
-    Set<GameBox> hiddenBoxesSet = {};
-    for (MathOperationModel mathOperation in mathOperationsList) {
-      for (GameBox gameBox in mathOperation.numberBoxes) {
-        if (gameBox.isHidden) {
-          hiddenBoxesSet.add(gameBox);
-        }
-      }
-    }
-    return hiddenBoxesSet;
-  }
 }
